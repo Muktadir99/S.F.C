@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en-IN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SFC – Spezia Fried Chicken | Uluberia</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ==============================
+   ROOT VARIABLES
+============================== */
+:root {
+  --red: #C4161C;
+  --red-dark: #9F1217;
+  --yellow: #F2C400;
+  --black: #121212;
+  --charcoal: #1B1B1B;
+  --white: #FFFFFF;
+  --muted: #E0E0E0;
+}
+
+/* ==============================
+   RESET & BASE
+============================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--black);
+  color: var(--white);
+  line-height: 1.7;
+}
+
+/* ==============================
+   TYPOGRAPHY
+============================== */
+h2 {
+  font-size: clamp(2rem, 5vw, 3rem);
+  line-height: 1.2;
+}
+
+p {
+  font-size: clamp(0.95rem, 2.5vw, 1.1rem);
+  line-height: 1.7;
+}
+
+/* ==============================
+   HEADER & NAVIGATION
+============================== */
+header {
+  position: sticky;
+  top: 0;
+  background: var(--charcoal);
+  border-bottom: 4px solid var(--red);
+  z-index: 1000;
+  transition: transform 0.35s ease;
+}
+
+header.hide-header {
+  transform: translateY(-100%);
+}
+
+nav {
+  max-width: 1200px;
+  margin: auto;
+  padding: 1rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo h1 {
+  font-family: 'Cinzel', serif;
+  font-size: 2.6rem;
+  color: var(--white);
+  letter-spacing: 4px;
+}
+
+.logo p {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  color: var(--yellow);
+  letter-spacing: 3px;
+  margin-top: 4px;
+  font-weight: 600;
+}
+
+.nav-links {
+  display: flex;
+  gap: 2rem;
+  list-style: none;
+}
+
+.nav-links a {
+  color: var(--muted);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.nav-links a:hover {
+  color: var(--yellow);
+}
+
+.hamburger {
+  display: none;
+  font-size: 1.8rem;
+  color: var(--yellow);
+  cursor: pointer;
+}
+
+/* Mobile Navigation */
+@media (max-width: 768px) {
+  .hamburger {
+    display: block;
+  }
+
+  .nav-links {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: var(--black);
+    flex-direction: column;
+    text-align: center;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease, opacity 0.25s ease;
+    border-bottom: 3px solid var(--red);
+  }
+
+  .nav-links.active {
+    max-height: 500px;
+    opacity: 1;
+  }
+
+  .nav-links li {
+    padding: 1rem 0;
+  }
+}
+
+/* ==============================
+   HERO SECTION (FINAL)
+============================== */
+.hero {
+  padding: 5rem 1.5rem;
+  text-align: center;
+  background:
+    radial-gradient(circle at top, rgba(255,255,255,0.08), transparent 40%),
+    linear-gradient(180deg, rgba(196,22,28,0.75), rgba(18,18,18,0.95));
+  border-bottom: 6px solid var(--yellow);
+}
+
+/* TITLE */
+.hero-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: clamp(2.4rem, 6vw, 3.4rem);
+  letter-spacing: 1px;
+}
+
+.hero-title span {
+  color: var(--yellow);
+  text-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+
+/* SUBLINE */
+.hero-subline {
+  margin-top: 0.6rem;
+  font-size: 0.85rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  opacity: 0.85;
+}
+
+/* ACTION ROW */
+.hero-actions {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* PHONE PILL */
+.hero-phone {
+  padding: 0.6rem 1.6rem;
+  border: 1.5px solid rgba(255,255,255,0.35);
+  border-radius: 30px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  background: rgba(0,0,0,0.18);
+}
+
+/* WHATSAPP CTA */
+.cta-action {
+  background: linear-gradient(135deg, var(--yellow), #d4aa00);
+  color: #000;
+  padding: 0.9rem 2.4rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-decoration: none;
+  border-radius: 6px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+@media (hover:hover) {
+  .cta-action:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 35px rgba(0,0,0,0.55);
+  }
+}
+/* ==============================
+   BUTTONS
+============================== */
+.btn {
+  padding: 1.1rem 2.6rem;
+  font-weight: 800;
+  text-decoration: none;
+  margin: 0.6rem;
+  display: inline-block;
+  border-radius: 4px;
+  letter-spacing: 1px;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #c4161c, #9f1217);
+  color: #fff;
+}
+
+.btn-secondary {
+  background: linear-gradient(135deg, #f2c400, #d4aa00);
+  color: #000;
+}
+
+@media (hover:hover) {
+  .btn:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 30px rgba(0,0,0,0.4);
+  }
+}
+
+/* ==============================
+   SECTIONS
+============================== */
+section {
+  padding: 4.5rem 1.5rem;
+}
+
+.container {
+  max-width: 1200px;
+  margin: auto;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.section-header h2 {
+  font-family: 'Oswald', sans-serif;
+  color: var(--red);
+}
+
+.section-header h2::after {
+  content: "";
+  display: block;
+  width: 80px;
+  height: 4px;
+  background: var(--yellow);
+  margin: 0.6rem auto;
+}
+
+.section-header p {
+  color: var(--muted);
+}
+
+/* ==============================
+   MENU
+============================== */
+#menu {
+  background: var(--charcoal);
+}
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.menu-card {
+  background: var(--black);
+  border: 3px solid var(--yellow);
+  padding: 1.5rem;
+}
+
+.menu-card h3 {
+  font-family: 'Oswald', sans-serif;
+  color: var(--yellow);
+  border-bottom: 2px solid var(--red);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.menu-item {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #2a2a2a;
+  padding: 0.45rem 0;
+}
+
+.menu-item:last-child {
+  border-bottom: none;
+}
+
+.item-price {
+  color: var(--red);
+  font-weight: 900;
+}
+
+/* Combo Details */
+.combo-details {
+  list-style: none;
+  padding-left: 0;
+  margin: 0.4rem 0 1rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.combo-details li {
+  margin-bottom: 0.25rem;
+}
+
+/* Hover Effects (Desktop Only) */
+@media (hover: hover) {
+  .menu-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .menu-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+  }
+}
+
+/* ==============================
+   ONLINE ORDER (FINAL)
+============================== */
+.order-wrapper {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.6rem;
+  padding: 2.5rem 1.5rem;
+  background: var(--charcoal);
+}
+
+/* Card */
+.order-platform {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  background: var(--black);
+  padding: 1.4rem 1.6rem;
+  border: 1.5px solid rgba(255,255,255,0.12);
+  text-decoration: none;
+  color: var(--white);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Logo */
+.order-platform img {
+  width: 36px;
+  height: auto;
+  flex-shrink: 0;
+}
+
+/* Text */
+.order-platform > div {
+  line-height: 1.3;
+}
+
+.order-platform h4 {
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.3rem;
+  margin-bottom: 0.2rem;
+}
+
+.order-platform span {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+/* Default hover */
+@media (hover:hover) {
+  .order-platform:hover {
+    transform: translateY(-4px);
+    border-color: var(--red);
+    box-shadow: 0 14px 32px rgba(0,0,0,0.45);
+  }
+}
+
+/* WhatsApp highlight */
+.order-platform.whatsapp {
+  border-color: var(--yellow);
+}
+
+@media (hover:hover) {
+  .order-platform.whatsapp:hover {
+    border-color: var(--yellow);
+    box-shadow: 0 14px 32px rgba(242,196,0,0.25);
+  }
+}
+
+/* Optional section spacing */
+#order {
+  padding-top: 5rem;
+  padding-bottom: 5rem;
+}
+
+/* ==============================
+   MAP
+============================== */
+.map-box {
+  border: 3px solid var(--red);
+  height: 350px;
+}
+
+/* ==============================
+   FOOTER
+============================== */
+footer {
+  background: #0a0a0a;
+  border-top: 4px solid var(--red);
+  text-align: center;
+  padding: 2rem;
+  color: var(--muted);
+}
+
+/* ==============================
+   FADE-UP ANIMATION
+============================== */
+.fade-up {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.6s ease;
+}
+
+.fade-up.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+/* ==============================
+   HAMBURGER ANIMATION
+============================== */
+.hamburger {
+  width: 28px;
+  height: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.hamburger span {
+  height: 3px;
+  width: 100%;
+  background: var(--yellow);
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+/* Active state */
+.hamburger.active span:nth-child(1) {
+  transform: rotate(45deg) translateY(8px);
+}
+
+.hamburger.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger.active span:nth-child(3) {
+  transform: rotate(-45deg) translateY(-8px);
+}
+</style>  
+  
+  
+</head>
+
+<body>
+
+<header>
+<nav>
+<div class="logo">
+<h1>SFC</h1>
+<p>Spezia Fried Chicken</p>
+</div>
+
+<ul class="nav-links" id="navLinks">
+<li><a href="#about">About</a></li>
+<li><a href="#menu">Menu</a></li>
+<li><a href="#order">Order</a></li>
+<li><a href="#map">Map</a></li>
+</ul>
+
+<div class="hamburger" id="hamburger">
+  <span></span>
+  <span></span>
+  <span></span>
+</div>
+</nav>
+</header>
+
+<section class="hero">
+  <h2 class="hero-title">
+    Bold <span>Fried Chicken</span>
+  </h2>
+
+  <p class="hero-subline">
+    Advance Order Available
+  </p>
+
+  <div class="hero-actions">
+    <div class="hero-phone">
+      📞 89611 86552
+    </div>
+
+    <a href="https://wa.me/918961186552" class="cta-action">
+      Order on WhatsApp
+    </a>
+  </div>
+</section>
+
+
+<!-- MENU (FULL MENU) -->
+<section id="menu" class="fade-up">
+  <div class="container">
+
+    <div class="section-header">
+      <h2>Full Menu</h2>
+      <p>Original SFC Uluberia Menu</p>
+    </div>
+
+    <div class="menu-grid">
+
+      <!-- Boneless -->
+      <div class="menu-card">
+        <h3>Boneless</h3>
+
+        <div class="menu-item"><span>Strips (3 pcs)</span><span class="item-price">₹70</span></div>
+        <div class="menu-item"><span>Strips (5 pcs)</span><span class="item-price">₹100</span></div>
+        <div class="menu-item"><span>Strips (8 pcs)</span><span class="item-price">₹150</span></div>
+        <div class="menu-item"><span>Chicken Popcorn M</span><span class="item-price">₹80</span></div>
+        <div class="menu-item"><span>Chicken Popcorn L</span><span class="item-price">₹120</span></div>
+        <div class="menu-item"><span>Fish Finger (3 pcs)</span><span class="item-price">₹80</span></div>
+        <div class="menu-item"><span>Fish Finger (5 pcs)</span><span class="item-price">₹130</span></div>
+        <div class="menu-item"><span>Fish Finger (8 pcs)</span><span class="item-price">₹200</span></div>
+        <div class="menu-item"><span>Veg Finger (8 pcs)</span><span class="item-price">₹130</span></div>
+        <div class="menu-item"><span>Fish Cutlet</span><span class="item-price">₹30</span></div>
+        <div class="menu-item"><span>French Fries</span><span class="item-price">₹80</span></div>
+        <div class="menu-item"><span>Maggi Popcorn</span><span class="item-price">₹90</span></div>
+        <div class="menu-item"><span>Cheese Popcorn</span><span class="item-price">₹210</span></div>
+      </div>
+
+      <!-- With Bone -->
+      <div class="menu-card">
+        <h3>With Bone</h3>
+
+        <div class="menu-item"><span>Chicken Pakora</span><span class="item-price">₹30</span></div>
+        <div class="menu-item"><span>Leg Piece</span><span class="item-price">₹60 / 70</span></div>
+        <div class="menu-item"><span>Chest Piece</span><span class="item-price">₹80</span></div>
+        <div class="menu-item"><span>Hot Wings</span><span class="item-price">₹40</span></div>
+        <div class="menu-item"><span>Full Leg Piece Double</span><span class="item-price">₹299</span></div>
+        <div class="menu-item"><span>Chicken 1006 (6 pcs)</span><span class="item-price">₹299</span></div>
+        <div class="menu-item"><span>Chicken Thai Piece (2 pcs)</span><span class="item-price">₹80</span></div>
+      </div>
+
+      <!-- Pizza -->
+      <div class="menu-card">
+        <h3>Pizza</h3>
+
+        <div class="menu-item"><span>Chicken Pizza</span><span class="item-price">Ask at Counter</span></div>
+        <div class="menu-item"><span>Veg Pizza</span><span class="item-price">Ask at Counter</span></div>
+        <div class="menu-item"><span>Paneer Pizza</span><span class="item-price">Ask at Counter</span></div>
+      </div>
+
+      <!-- Combo Pack -->
+      <div class="menu-card">
+        <h3>Combo Pack</h3>
+
+        <div class="menu-item"><span>Combo 1</span><span class="item-price">₹230</span></div>
+        <ul class="combo-details">
+          <li>Chicken Popcorn M</li>
+          <li>Chicken Pakora (2 pcs)</li>
+          <li>Strips (2 pcs)</li>
+          <li>Chicken Burger (1 pc)</li>
+        </ul>
+
+        <div class="menu-item"><span>Combo 2</span><span class="item-price">₹330</span></div>
+        <ul class="combo-details">
+          <li>Strips (6 pcs)</li>
+          <li>Leg Piece (2 pcs)</li>
+          <li>Chest Piece (2 pcs)</li>
+        </ul>
+
+        <div class="menu-item"><span>Combo 3</span><span class="item-price">₹550</span></div>
+        <ul class="combo-details">
+          <li>Hot Wings (4 pcs)</li>
+          <li>Leg Piece (2 pcs)</li>
+          <li>Popcorn L</li>
+          <li>Chicken Burger (2 pcs)</li>
+          <li>Egg Burger (2 pcs)</li>
+        </ul>
+      </div>
+
+      <!-- Burger -->
+      <div class="menu-card">
+        <h3>Burger</h3>
+
+        <div class="menu-item"><span>Potato Burger</span><span class="item-price">₹50</span></div>
+        <div class="menu-item"><span>Potato Cheese Burger</span><span class="item-price">₹65</span></div>
+        <div class="menu-item"><span>Veg Burger</span><span class="item-price">₹50</span></div>
+        <div class="menu-item"><span>Chicken Burger</span><span class="item-price">₹60</span></div>
+        <div class="menu-item"><span>Chicken Cheese Burger</span><span class="item-price">₹70</span></div>
+        <div class="menu-item"><span>Chicken Hot & Spice Burger</span><span class="item-price">₹70</span></div>
+        <div class="menu-item"><span>Egg Burger</span><span class="item-price">₹50</span></div>
+        <div class="menu-item"><span>Egg with Chicken Burger</span><span class="item-price">₹75</span></div>
+      </div>
+
+      <!-- Drinks -->
+      <div class="menu-card">
+        <h3>Drinks & Others</h3>
+
+        <div class="menu-item"><span>Lassi</span><span class="item-price">₹40</span></div>
+        <div class="menu-item"><span>Masala Coke</span><span class="item-price">₹45</span></div>
+        <div class="menu-item"><span>Tea</span><span class="item-price">₹15</span></div>
+        <div class="menu-item"><span>Coffee</span><span class="item-price">₹20</span></div>
+        <div class="menu-item"><span>Extra Cheese</span><span class="item-price">₹20</span></div>
+        <div class="menu-item"><span>Extra Egg</span><span class="item-price">₹20</span></div>
+        <div class="menu-item"><span>BBQ Chicken (8 pcs)</span><span class="item-price">₹450</span></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ONLINE ORDER -->
+<section id="order" class="fade-up">
+  <div class="container">
+    <div class="section-header">
+      <h2>Online Order</h2>
+      <p>Choose your preferred delivery platform</p>
+    </div>
+
+    <div class="order-wrapper">
+
+      <a href="https://www.swiggy.com" target="_blank" class="order-platform">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/1/13/Swiggy_logo.png" alt="Swiggy">
+        <div>
+          <h4>Swiggy</h4>
+          <span>Order via Swiggy</span>
+        </div>
+      </a>
+
+      <a href="https://www.zomato.com" target="_blank" class="order-platform">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/7/75/Zomato_logo.png" alt="Zomato">
+        <div>
+          <h4>Zomato</h4>
+          <span>Order via Zomato</span>
+        </div>
+      </a>
+
+      <a href="https://wa.me/918961186552" target="_blank" class="order-platform whatsapp">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+        <div>
+          <h4>WhatsApp</h4>
+          <span>Direct chat & order</span>
+        </div>
+      </a>
+
+    </div>
+  </div>
+</section>
+<!-- ABOUT -->
+<section id="about" class="fade-up">
+  <div class="container">
+    <div class="section-header">
+      <h2>About SFC</h2>
+      <p>Uluberia’s trusted destination for crispy fried chicken</p>
+    </div>
+
+    <p style="color:#e0e0e0;text-align:center;max-width:850px;margin:auto;">
+      SFC – Spezia Fried Chicken is a locally loved fried chicken outlet in Uluberia, known for bold flavours, generous portions, and consistent quality. 
+      Our menu blends street-style spice with carefully crafted recipes, delivering crispy texture on the outside and juicy taste inside.
+      <br><br>
+      From quick snacks to full combo meals, every order is prepared fresh with attention to taste, hygiene, and value. 
+      Whether you dine in, take away, or order online, SFC stands for honest food, fast service, and flavours that keep customers coming back.
+    </p>
+  </div>
+</section>
+<!-- MAP -->
+<section id="map" class="fade-up">
+<div class="container">
+<div class="section-header">
+<h2>Find Us</h2>
+<p>Uluberia, Howrah</p>
+</div>
+<iframe class="map-box" src="https://www.google.com/maps?q=Uluberia%20Howrah&output=embed" width="100%" loading="lazy"></iframe>
+</div>
+</section>
+
+<footer>
+<p>© SFC – Spezia Fried Chicken | Uluberia</p>
+</footer>
+
+<script>
+/* -----------------------------
+   HAMBURGER MENU
+----------------------------- */
+const hamburger = document.getElementById("hamburger");
+const navLinks = document.getElementById("navLinks");
+
+if (hamburger && navLinks) {
+
+  // Toggle menu
+  hamburger.addEventListener("click", (e) => {
+    e.stopPropagation(); // prevent instant close
+    navLinks.classList.toggle("active");
+    hamburger.classList.toggle("active");
+    
+  });
+
+  // Close on outside click
+  document.addEventListener("click", (e) => {
+    const clickedInside =
+      navLinks.contains(e.target) || hamburger.contains(e.target);
+
+    if (!clickedInside) {
+      navLinks.classList.remove("active");
+      hamburger.classList.remove("active");
+    }
+  });
+
+  // Close when clicking a menu link
+  navLinks.querySelectorAll("a").forEach(link => {
+    link.addEventListener("click", () => {
+      navLinks.classList.remove("active");
+    });
+  });
+}
+
+/* -----------------------------
+   FADE-UP ANIMATION ON SCROLL
+----------------------------- */
+const fadeElements = document.querySelectorAll(".fade-up");
+
+if (fadeElements.length > 0 && "IntersectionObserver" in window) {
+  const observer = new IntersectionObserver(
+    (entries, obs) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("show");
+          obs.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.15 }
+  );
+
+  fadeElements.forEach(el => observer.observe(el));
+}
+
+/* -----------------------------
+   HEADER HIDE / SHOW ON SCROLL
+----------------------------- */
+const header = document.querySelector("header");
+let lastScrollY = window.scrollY;
+
+if (header) {
+  window.addEventListener("scroll", () => {
+    const currentScroll = window.scrollY;
+
+    if (currentScroll > lastScrollY && currentScroll > 120) {
+      header.classList.add("hide-header");
+    } else {
+      header.classList.remove("hide-header");
+    }
+
+    lastScrollY = currentScroll;
+  });
+}
+</script>
+</body>
+</html>

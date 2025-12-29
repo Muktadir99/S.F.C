@@ -332,7 +332,21 @@ section {
   color: var(--red);
   font-weight: 900;
 }
+.menu-action {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
 
+.menu-action button {
+  background: var(--yellow);
+  color: #000;
+  border: none;
+  padding: 0.3rem 0.6rem;
+  font-weight: 900;
+  border-radius: 4px;
+  cursor: pointer;
+}
 /* Combo Details */
 .combo-details {
   list-style: none;
@@ -432,7 +446,60 @@ section {
   padding-top: 5rem;
   padding-bottom: 5rem;
 }
+/* ==============================
+   STICKY CART BAR (FINAL)
+============================== */
 
+/* Main bar */
+#cart-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: var(--charcoal);
+  border-top: 3px solid var(--yellow);
+  padding: 0.9rem 1.2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+  z-index: 999;
+}
+
+/* Show state */
+#cart-bar.show {
+  transform: translateY(0);
+}
+
+/* Summary text */
+#cart-summary {
+  font-weight: 700;
+  color: var(--white);
+}
+
+/* Checkout button */
+#cart-bar button {
+  background: var(--yellow);
+  color: #000;
+  border: none;
+  padding: 0.6rem 1.4rem;
+  font-weight: 800;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Desktop behaviour */
+@media (min-width: 992px) {
+  #cart-bar {
+    width: auto;
+    left: auto;
+    right: 20px;
+    bottom: 20px;
+    border-radius: 10px;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.45);
+  }
+}
 /* ==============================
    MAP
 ============================== */
@@ -496,6 +563,133 @@ footer {
 .hamburger.active span:nth-child(3) {
   transform: rotate(-45deg) translateY(-8px);
 }
+
+
+/* =============================
+   MODAL OVERLAY
+============================= */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  backdrop-filter: blur(4px);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.modal.show {
+  display: flex;
+}
+
+/* =============================
+   MODAL BOX
+============================= */
+.modal-box {
+  background: linear-gradient(180deg, #1b1b1b, #0f0f0f);
+  padding: 1.8rem;
+  width: 92%;
+  max-width: 420px;
+  border-radius: 10px;
+  border: 2px solid #f2c400;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.6);
+  animation: modalPop 0.25s ease-out;
+}
+
+@keyframes modalPop {
+  from {
+    transform: scale(0.92);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* =============================
+   TITLE
+============================= */
+.modal-box h3 {
+  text-align: center;
+  margin-bottom: 1rem;
+  color: #f2c400;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+/* =============================
+   INPUTS
+============================= */
+.modal-box input {
+  width: 100%;
+  margin: 0.6rem 0;
+  padding: 0.7rem 0.75rem;
+  background: #000;
+  color: #fff;
+  border: 1.5px solid #333;
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+
+.modal-box input:focus {
+  outline: none;
+  border-color: #f2c400;
+  box-shadow: 0 0 0 2px rgba(242,196,0,0.2);
+}
+
+/* =============================
+   ACTION BUTTONS
+============================= */
+.modal-actions {
+  display: flex;
+  gap: 0.8rem;
+  margin-top: 1.4rem;
+}
+
+.modal-actions button {
+  flex: 1;
+  padding: 0.7rem 0;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+/* Cancel */
+.modal-actions button:first-child {
+  background: #2a2a2a;
+  color: #ccc;
+}
+
+/* Confirm */
+.modal-actions button:last-child {
+  background: linear-gradient(135deg, #f2c400, #d4aa00);
+  color: #000;
+}
+
+/* Hover (desktop only) */
+@media (hover:hover) {
+  .modal-actions button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+  }
+}
+
+/* =============================
+   DESKTOP POLISH
+============================= */
+@media (min-width: 768px) {
+  .modal-box {
+    padding: 2.2rem;
+  }
+
+  .modal-box h3 {
+    font-size: 1.5rem;
+  }
+}
 </style>  
   
   
@@ -527,7 +721,7 @@ footer {
 
 <section class="hero">
   <h2 class="hero-title">
-    Bold <span>Fried Chicken</span>
+    Spezia <span>Fried Chicken</span>
   </h2>
 
   <p class="hero-subline">
@@ -545,7 +739,6 @@ footer {
   </div>
 </section>
 
-
 <!-- MENU (FULL MENU) -->
 <section id="menu" class="fade-up">
   <div class="container">
@@ -561,101 +754,141 @@ footer {
       <div class="menu-card">
         <h3>Boneless</h3>
 
-        <div class="menu-item"><span>Strips (3 pcs)</span><span class="item-price">₹70</span></div>
-        <div class="menu-item"><span>Strips (5 pcs)</span><span class="item-price">₹100</span></div>
-        <div class="menu-item"><span>Strips (8 pcs)</span><span class="item-price">₹150</span></div>
-        <div class="menu-item"><span>Chicken Popcorn M</span><span class="item-price">₹80</span></div>
-        <div class="menu-item"><span>Chicken Popcorn L</span><span class="item-price">₹120</span></div>
-        <div class="menu-item"><span>Fish Finger (3 pcs)</span><span class="item-price">₹80</span></div>
-        <div class="menu-item"><span>Fish Finger (5 pcs)</span><span class="item-price">₹130</span></div>
-        <div class="menu-item"><span>Fish Finger (8 pcs)</span><span class="item-price">₹200</span></div>
-        <div class="menu-item"><span>Veg Finger (8 pcs)</span><span class="item-price">₹130</span></div>
-        <div class="menu-item"><span>Fish Cutlet</span><span class="item-price">₹30</span></div>
-        <div class="menu-item"><span>French Fries</span><span class="item-price">₹80</span></div>
-        <div class="menu-item"><span>Maggi Popcorn</span><span class="item-price">₹90</span></div>
-        <div class="menu-item"><span>Cheese Popcorn</span><span class="item-price">₹210</span></div>
+        <div class="menu-item"><span>Strips (3 pcs)</span><div class="menu-action"><span class="item-price">₹70</span><button onclick="addToCart('Strips (3 pcs)',70)">+</button></div></div>
+        <div class="menu-item"><span>Strips (5 pcs)</span><div class="menu-action"><span class="item-price">₹100</span><button onclick="addToCart('Strips (5 pcs)',100)">+</button></div></div>
+        <div class="menu-item"><span>Strips (8 pcs)</span><div class="menu-action"><span class="item-price">₹150</span><button onclick="addToCart('Strips (8 pcs)',150)">+</button></div></div>
+
+        <div class="menu-item"><span>Chicken Popcorn M</span><div class="menu-action"><span class="item-price">₹80</span><button onclick="addToCart('Chicken Popcorn M',80)">+</button></div></div>
+        <div class="menu-item"><span>Chicken Popcorn L</span><div class="menu-action"><span class="item-price">₹120</span><button onclick="addToCart('Chicken Popcorn L',120)">+</button></div></div>
+
+        <div class="menu-item"><span>Fish Finger (3 pcs)</span><div class="menu-action"><span class="item-price">₹80</span><button onclick="addToCart('Fish Finger (3 pcs)',80)">+</button></div></div>
+        <div class="menu-item"><span>Fish Finger (5 pcs)</span><div class="menu-action"><span class="item-price">₹130</span><button onclick="addToCart('Fish Finger (5 pcs)',130)">+</button></div></div>
+        <div class="menu-item"><span>Fish Finger (8 pcs)</span><div class="menu-action"><span class="item-price">₹200</span><button onclick="addToCart('Fish Finger (8 pcs)',200)">+</button></div></div>
+
+        <div class="menu-item"><span>Veg Finger (8 pcs)</span><div class="menu-action"><span class="item-price">₹130</span><button onclick="addToCart('Veg Finger (8 pcs)',130)">+</button></div></div>
+        <div class="menu-item"><span>Fish Cutlet</span><div class="menu-action"><span class="item-price">₹30</span><button onclick="addToCart('Fish Cutlet',30)">+</button></div></div>
+
+        <div class="menu-item"><span>French Fries</span><div class="menu-action"><span class="item-price">₹80</span><button onclick="addToCart('French Fries',80)">+</button></div></div>
+        <div class="menu-item"><span>Maggi Popcorn</span><div class="menu-action"><span class="item-price">₹90</span><button onclick="addToCart('Maggi Popcorn',90)">+</button></div></div>
+        <div class="menu-item"><span>Cheese Popcorn</span><div class="menu-action"><span class="item-price">₹210</span><button onclick="addToCart('Cheese Popcorn',210)">+</button></div></div>
       </div>
 
       <!-- With Bone -->
       <div class="menu-card">
         <h3>With Bone</h3>
 
-        <div class="menu-item"><span>Chicken Pakora</span><span class="item-price">₹30</span></div>
-        <div class="menu-item"><span>Leg Piece</span><span class="item-price">₹60 / 70</span></div>
-        <div class="menu-item"><span>Chest Piece</span><span class="item-price">₹80</span></div>
-        <div class="menu-item"><span>Hot Wings</span><span class="item-price">₹40</span></div>
-        <div class="menu-item"><span>Full Leg Piece Double</span><span class="item-price">₹299</span></div>
-        <div class="menu-item"><span>Chicken 1006 (6 pcs)</span><span class="item-price">₹299</span></div>
-        <div class="menu-item"><span>Chicken Thai Piece (2 pcs)</span><span class="item-price">₹80</span></div>
+        <div class="menu-item"><span>Chicken Pakora</span><div class="menu-action"><span class="item-price">₹30</span><button onclick="addToCart('Chicken Pakora',30)">+</button></div></div>
+        <div class="menu-item"><span>Leg Piece</span><div class="menu-action"><span class="item-price">₹70</span><button onclick="addToCart('Leg Piece',70)">+</button></div></div>
+        <div class="menu-item"><span>Chest Piece</span><div class="menu-action"><span class="item-price">₹80</span><button onclick="addToCart('Chest Piece',80)">+</button></div></div>
+        <div class="menu-item"><span>Hot Wings</span><div class="menu-action"><span class="item-price">₹40</span><button onclick="addToCart('Hot Wings',40)">+</button></div></div>
+
+        <div class="menu-item"><span>Full Leg Piece Double</span><div class="menu-action"><span class="item-price">₹299</span><button onclick="addToCart('Full Leg Piece Double',299)">+</button></div></div>
+        <div class="menu-item"><span>Chicken 1006 (6 pcs)</span><div class="menu-action"><span class="item-price">₹299</span><button onclick="addToCart('Chicken 1006 (6 pcs)',299)">+</button></div></div>
+        <div class="menu-item"><span>Chicken Thai Piece (2 pcs)</span><div class="menu-action"><span class="item-price">₹80</span><button onclick="addToCart('Chicken Thai Piece (2 pcs)',80)">+</button></div></div>
       </div>
 
       <!-- Pizza -->
       <div class="menu-card">
         <h3>Pizza</h3>
 
-        <div class="menu-item"><span>Chicken Pizza</span><span class="item-price">Ask at Counter</span></div>
-        <div class="menu-item"><span>Veg Pizza</span><span class="item-price">Ask at Counter</span></div>
-        <div class="menu-item"><span>Paneer Pizza</span><span class="item-price">Ask at Counter</span></div>
+        <div class="menu-item"><span>Chicken Pizza</span><div class="menu-action"><span class="item-price">₹0</span><button onclick="addToCart('Chicken Pizza',0)">+</button></div></div>
+        <div class="menu-item"><span>Veg Pizza</span><div class="menu-action"><span class="item-price">₹0</span><button onclick="addToCart('Veg Pizza',0)">+</button></div></div>
+        <div class="menu-item"><span>Paneer Pizza</span><div class="menu-action"><span class="item-price">₹0</span><button onclick="addToCart('Paneer Pizza',0)">+</button></div></div>
       </div>
 
       <!-- Combo Pack -->
       <div class="menu-card">
         <h3>Combo Pack</h3>
 
-        <div class="menu-item"><span>Combo 1</span><span class="item-price">₹230</span></div>
-        <ul class="combo-details">
-          <li>Chicken Popcorn M</li>
-          <li>Chicken Pakora (2 pcs)</li>
-          <li>Strips (2 pcs)</li>
-          <li>Chicken Burger (1 pc)</li>
-        </ul>
+  <!-- COMBO 1 -->
+      <div class="menu-item">
+        <span>
+      Combo 1<br>
+      <small style="color:#aaa;font-size:0.8rem;">
+        Chicken Popcorn M, Chicken Pakora (2 pcs),
+        Strips (2 pcs), Chicken Burger (1 pc)
+      </small>
+    </span>
 
-        <div class="menu-item"><span>Combo 2</span><span class="item-price">₹330</span></div>
-        <ul class="combo-details">
-          <li>Strips (6 pcs)</li>
-          <li>Leg Piece (2 pcs)</li>
-          <li>Chest Piece (2 pcs)</li>
-        </ul>
+    <div class="menu-action">
+      <span class="item-price">₹230</span>
+      <button onclick="addToCart(
+        'Combo 1: Chicken Popcorn M + Chicken Pakora (2 pcs) + Strips (2 pcs) + Chicken Burger (1 pc)',
+        230
+      )">+</button>
+    </div>
+  </div>
 
-        <div class="menu-item"><span>Combo 3</span><span class="item-price">₹550</span></div>
-        <ul class="combo-details">
-          <li>Hot Wings (4 pcs)</li>
-          <li>Leg Piece (2 pcs)</li>
-          <li>Popcorn L</li>
-          <li>Chicken Burger (2 pcs)</li>
-          <li>Egg Burger (2 pcs)</li>
-        </ul>
-      </div>
+  <!-- COMBO 2 -->
+  <div class="menu-item">
+    <span>
+      Combo 2<br>
+      <small style="color:#aaa;font-size:0.8rem;">
+        Strips (6 pcs), Leg Piece (2 pcs), Chest Piece (2 pcs)
+      </small>
+    </span>
+
+    <div class="menu-action">
+      <span class="item-price">₹330</span>
+      <button onclick="addToCart(
+        'Combo 2: Strips (6 pcs) + Leg Piece (2 pcs) + Chest Piece (2 pcs)',
+        330
+      )">+</button>
+    </div>
+  </div>
+
+  <!-- COMBO 3 -->
+  <div class="menu-item">
+    <span>
+      Combo 3<br>
+      <small style="color:#aaa;font-size:0.8rem;">
+        Hot Wings (4 pcs), Leg Piece (2 pcs),
+        Popcorn L, Chicken Burger (2 pcs),
+        Egg Burger (2 pcs)
+      </small>
+    </span>
+
+    <div class="menu-action">
+      <span class="item-price">₹550</span>
+      <button onclick="addToCart(
+        'Combo 3: Hot Wings (4 pcs) + Leg Piece (2 pcs) + Popcorn L + Chicken Burger (2 pcs) + Egg Burger (2 pcs)',
+        550
+      )">+</button>
+    </div>
+  </div>
+
+</div>
 
       <!-- Burger -->
       <div class="menu-card">
         <h3>Burger</h3>
 
-        <div class="menu-item"><span>Potato Burger</span><span class="item-price">₹50</span></div>
-        <div class="menu-item"><span>Potato Cheese Burger</span><span class="item-price">₹65</span></div>
-        <div class="menu-item"><span>Veg Burger</span><span class="item-price">₹50</span></div>
-        <div class="menu-item"><span>Chicken Burger</span><span class="item-price">₹60</span></div>
-        <div class="menu-item"><span>Chicken Cheese Burger</span><span class="item-price">₹70</span></div>
-        <div class="menu-item"><span>Chicken Hot & Spice Burger</span><span class="item-price">₹70</span></div>
-        <div class="menu-item"><span>Egg Burger</span><span class="item-price">₹50</span></div>
-        <div class="menu-item"><span>Egg with Chicken Burger</span><span class="item-price">₹75</span></div>
+        <div class="menu-item"><span>Potato Burger</span><div class="menu-action"><span class="item-price">₹50</span><button onclick="addToCart('Potato Burger',50)">+</button></div></div>
+        <div class="menu-item"><span>Potato Cheese Burger</span><div class="menu-action"><span class="item-price">₹65</span><button onclick="addToCart('Potato Cheese Burger',65)">+</button></div></div>
+        <div class="menu-item"><span>Veg Burger</span><div class="menu-action"><span class="item-price">₹50</span><button onclick="addToCart('Veg Burger',50)">+</button></div></div>
+        <div class="menu-item"><span>Chicken Burger</span><div class="menu-action"><span class="item-price">₹60</span><button onclick="addToCart('Chicken Burger',60)">+</button></div></div>
+        <div class="menu-item"><span>Chicken Cheese Burger</span><div class="menu-action"><span class="item-price">₹70</span><button onclick="addToCart('Chicken Cheese Burger',70)">+</button></div></div>
+        <div class="menu-item"><span>Chicken Hot & Spice Burger</span><div class="menu-action"><span class="item-price">₹70</span><button onclick="addToCart('Chicken Hot & Spice Burger',70)">+</button></div></div>
+        <div class="menu-item"><span>Egg Burger</span><div class="menu-action"><span class="item-price">₹50</span><button onclick="addToCart('Egg Burger',50)">+</button></div></div>
+        <div class="menu-item"><span>Egg with Chicken Burger</span><div class="menu-action"><span class="item-price">₹75</span><button onclick="addToCart('Egg with Chicken Burger',75)">+</button></div></div>
       </div>
 
       <!-- Drinks -->
       <div class="menu-card">
         <h3>Drinks & Others</h3>
 
-        <div class="menu-item"><span>Lassi</span><span class="item-price">₹40</span></div>
-        <div class="menu-item"><span>Masala Coke</span><span class="item-price">₹45</span></div>
-        <div class="menu-item"><span>Tea</span><span class="item-price">₹15</span></div>
-        <div class="menu-item"><span>Coffee</span><span class="item-price">₹20</span></div>
-        <div class="menu-item"><span>Extra Cheese</span><span class="item-price">₹20</span></div>
-        <div class="menu-item"><span>Extra Egg</span><span class="item-price">₹20</span></div>
-        <div class="menu-item"><span>BBQ Chicken (8 pcs)</span><span class="item-price">₹450</span></div>
+        <div class="menu-item"><span>Lassi</span><div class="menu-action"><span class="item-price">₹40</span><button onclick="addToCart('Lassi',40)">+</button></div></div>
+        <div class="menu-item"><span>Masala Coke</span><div class="menu-action"><span class="item-price">₹45</span><button onclick="addToCart('Masala Coke',45)">+</button></div></div>
+        <div class="menu-item"><span>Tea</span><div class="menu-action"><span class="item-price">₹15</span><button onclick="addToCart('Tea',15)">+</button></div></div>
+        <div class="menu-item"><span>Coffee</span><div class="menu-action"><span class="item-price">₹20</span><button onclick="addToCart('Coffee',20)">+</button></div></div>
+        <div class="menu-item"><span>Extra Cheese</span><div class="menu-action"><span class="item-price">₹20</span><button onclick="addToCart('Extra Cheese',20)">+</button></div></div>
+        <div class="menu-item"><span>Extra Egg</span><div class="menu-action"><span class="item-price">₹20</span><button onclick="addToCart('Extra Egg',20)">+</button></div></div>
+        <div class="menu-item"><span>BBQ Chicken (8 pcs)</span><div class="menu-action"><span class="item-price">₹450</span><button onclick="addToCart('BBQ Chicken (8 pcs)',450)">+</button></div></div>
       </div>
 
     </div>
   </div>
+  
 </section>
 
 <!-- ONLINE ORDER -->
@@ -668,7 +901,7 @@ footer {
 
     <div class="order-wrapper">
 
-      <a href="https://www.swiggy.com" target="_blank" class="order-platform">
+      <a href="https://www.swiggy.com/menu/577227?source=sharing" target="_blank" class="order-platform">
         <img src="https://upload.wikimedia.org/wikipedia/commons/1/13/Swiggy_logo.png" alt="Swiggy">
         <div>
           <h4>Swiggy</h4>
@@ -676,7 +909,7 @@ footer {
         </div>
       </a>
 
-      <a href="https://www.zomato.com" target="_blank" class="order-platform">
+      <a href="https://www.zomato.com/uluberia/sfc-spezia-fried-chicken-uluberia-locality/order?v=o2" target="_blank" class="order-platform">
         <img src="https://upload.wikimedia.org/wikipedia/commons/7/75/Zomato_logo.png" alt="Zomato">
         <div>
           <h4>Zomato</h4>
@@ -719,90 +952,181 @@ footer {
 <h2>Find Us</h2>
 <p>Uluberia, Howrah</p>
 </div>
-<iframe class="map-box" src="https://www.google.com/maps?q=Uluberia%20Howrah&output=embed" width="100%" loading="lazy"></iframe>
+<iframe class="map-box" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3686.9555130656154!2d88.0992016!3d22.468306!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a0287566a72bbc9%3A0xcc33a88acf7e5dd7!2sSFC%20-%20Spezia%20Fried%20Chicken!5e0!3m2!1sen!2sin!4v1766993485391!5m2!1sen!2sin" width="100%" loading="lazy"></iframe>
 </div>
 </section>
+<!-- STICKY CART BAR -->
+<div id="cart-bar">
+  <span id="cart-summary">0 items • ₹0</span>
+  <button onclick="checkout()">Checkout</button>
+</div>
 
+<div id="order-modal" class="modal">
+  <div class="modal-box">
+    <h3>Enter your details</h3>
+    <input id="cust-name" type="text" placeholder="Your name">
+    <input id="cust-phone" type="tel" placeholder="10 digit phone">
+    <div class="modal-actions">
+      <button onclick="closeModal()">Cancel</button>
+      <button onclick="confirmOrder()">Confirm</button>
+    </div>
+  </div>
+</div>
+  
 <footer>
 <p>© SFC – Spezia Fried Chicken | Uluberia</p>
 </footer>
 
 <script>
-/* -----------------------------
-   HAMBURGER MENU
------------------------------ */
+/* =============================
+   GLOBAL STATE
+============================= */
+let cart = [];
+const MAX_QTY_PER_ITEM = 20;
+
+/* =============================
+   ADD TO CART
+============================= */
+function addToCart(name, price) {
+  const item = cart.find(i => i.name === name);
+
+  if (item) {
+    if (item.qty >= MAX_QTY_PER_ITEM) {
+      alert("Maximum quantity reached");
+      return;
+    }
+    item.qty++;
+  } else {
+    cart.push({ name, price, qty: 1 });
+  }
+
+  updateCartBar();
+}
+
+/* =============================
+   UPDATE CART BAR
+============================= */
+function updateCartBar() {
+  const cartBar = document.getElementById("cart-bar");
+  const summary = document.getElementById("cart-summary");
+  if (!cartBar || !summary) return;
+
+  if (!cart.length) {
+    cartBar.classList.remove("show");
+    return;
+  }
+
+  let qty = 0;
+  let total = 0;
+
+  cart.forEach(i => {
+    qty += i.qty;
+    total += i.qty * i.price;
+  });
+
+  summary.textContent = `${qty} item${qty > 1 ? "s" : ""} • ₹${total}`;
+  cartBar.classList.add("show");
+}
+
+/* =============================
+   CHECKOUT
+============================= */
+function checkout() {
+  if (!cart.length) {
+    alert("Cart empty");
+    return;
+  }
+  document.getElementById("order-modal").classList.add("show");
+}
+
+function closeModal() {
+  document.getElementById("order-modal").classList.remove("show");
+}
+
+function confirmOrder() {
+  const name = document.getElementById("cust-name").value.trim();
+  const phone = document.getElementById("cust-phone").value.trim();
+
+  if (!name || !/^\d{10}$/.test(phone)) {
+    alert("Enter valid details");
+    return;
+  }
+
+  let msg = `New Website Order\nCustomer: ${name}\nPhone: ${phone}\n\n`;
+  let total = 0;
+
+  cart.forEach(i => {
+    total += i.qty * i.price;
+    msg += `${i.name} x ${i.qty} = ₹${i.qty * i.price}\n`;
+  });
+
+  msg += `\nTotal: ₹${total}`;
+
+  closeModal();
+  window.open(
+    "https://wa.me/919674419537?text=" + encodeURIComponent(msg),
+    "_blank"
+  );
+}
+
+/* =============================
+   FADE UP FORCE SHOW
+============================= */
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll(".fade-up").forEach(el => {
+    el.classList.add("show");
+  });
+});
+
+/* =============================
+   HEADER HIDE ON SCROLL
+============================= */
+let lastScrollY = window.scrollY;
+const header = document.querySelector("header");
+
+window.addEventListener("scroll", () => {
+  if (!header) return;
+
+  if (window.scrollY > lastScrollY && window.scrollY > 80) {
+    header.classList.add("hide-header");
+  } else {
+    header.classList.remove("hide-header");
+  }
+  lastScrollY = window.scrollY;
+});
+
+/* =============================
+   HAMBURGER MENU FIX
+============================= */
 const hamburger = document.getElementById("hamburger");
 const navLinks = document.getElementById("navLinks");
 
 if (hamburger && navLinks) {
-
-  // Toggle menu
-  hamburger.addEventListener("click", (e) => {
-    e.stopPropagation(); // prevent instant close
-    navLinks.classList.toggle("active");
-    hamburger.classList.toggle("active");
-    
+  hamburger.addEventListener("click", e => {
+    e.stopPropagation();
+    const open = navLinks.classList.toggle("active");
+    hamburger.classList.toggle("active", open);
+    document.body.style.overflow = open ? "hidden" : "";
   });
 
-  // Close on outside click
-  document.addEventListener("click", (e) => {
-    const clickedInside =
-      navLinks.contains(e.target) || hamburger.contains(e.target);
-
-    if (!clickedInside) {
+  document.addEventListener("click", e => {
+    if (!navLinks.contains(e.target) && !hamburger.contains(e.target)) {
       navLinks.classList.remove("active");
       hamburger.classList.remove("active");
+      document.body.style.overflow = "";
     }
   });
 
-  // Close when clicking a menu link
   navLinks.querySelectorAll("a").forEach(link => {
     link.addEventListener("click", () => {
       navLinks.classList.remove("active");
+      hamburger.classList.remove("active");
+      document.body.style.overflow = "";
     });
   });
 }
 
-/* -----------------------------
-   FADE-UP ANIMATION ON SCROLL
------------------------------ */
-const fadeElements = document.querySelectorAll(".fade-up");
-
-if (fadeElements.length > 0 && "IntersectionObserver" in window) {
-  const observer = new IntersectionObserver(
-    (entries, obs) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("show");
-          obs.unobserve(entry.target);
-        }
-      });
-    },
-    { threshold: 0.15 }
-  );
-
-  fadeElements.forEach(el => observer.observe(el));
-}
-
-/* -----------------------------
-   HEADER HIDE / SHOW ON SCROLL
------------------------------ */
-const header = document.querySelector("header");
-let lastScrollY = window.scrollY;
-
-if (header) {
-  window.addEventListener("scroll", () => {
-    const currentScroll = window.scrollY;
-
-    if (currentScroll > lastScrollY && currentScroll > 120) {
-      header.classList.add("hide-header");
-    } else {
-      header.classList.remove("hide-header");
-    }
-
-    lastScrollY = currentScroll;
-  });
-}
 </script>
+  
 </body>
 </html>

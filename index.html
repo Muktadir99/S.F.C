@@ -227,34 +227,103 @@ nav {
 /* ==============================
    BUTTONS
 ============================== */
+/* ==============================
+   BUTTON SYSTEM – PREMIUM
+============================== */
+
 .btn {
   padding: 1.1rem 2.6rem;
   font-weight: 800;
   text-decoration: none;
   margin: 0.6rem;
   display: inline-block;
-  border-radius: 4px;
+  border-radius: 6px;
   letter-spacing: 1px;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+  box-shadow:
+    0 8px 18px rgba(0,0,0,0.35),
+    inset 0 1px 0 rgba(255,255,255,0.15);
 }
 
+/* Primary */
 .btn-primary {
   background: linear-gradient(135deg, #c4161c, #9f1217);
   color: #fff;
 }
 
+/* Secondary */
 .btn-secondary {
   background: linear-gradient(135deg, #f2c400, #d4aa00);
   color: #000;
 }
 
+/* Shine sweep effect */
+.btn::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 120%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255,255,255,0.25),
+    transparent
+  );
+  transition: left 0.6s ease;
+}
+
 @media (hover:hover) {
   .btn:hover {
     transform: translateY(-4px);
-    box-shadow: 0 14px 30px rgba(0,0,0,0.4);
+    box-shadow:
+      0 14px 30px rgba(0,0,0,0.45),
+      inset 0 1px 0 rgba(255,255,255,0.2);
+  }
+
+  .btn:hover::after {
+    left: 120%;
   }
 }
 
+/* Active press (mobile feel) */
+.btn:active {
+  transform: translateY(-1px) scale(0.97);
+  box-shadow:
+    0 4px 10px rgba(0,0,0,0.35),
+    inset 0 3px 8px rgba(0,0,0,0.35);
+}
+
+/* Focus states */
+.btn:focus {
+  outline: none;
+}
+
+.btn:focus-visible {
+  box-shadow:
+    0 0 0 3px rgba(242,196,0,0.35),
+    0 10px 25px rgba(0,0,0,0.4);
+}
+
+/* CTA specific punch */
+.cta-action {
+  box-shadow:
+    0 14px 35px rgba(242,196,0,0.35),
+    inset 0 1px 0 rgba(255,255,255,0.25);
+}
+
+/* Remove ugly mobile tap highlight */
+button,
+a,
+.menu-action button {
+  -webkit-tap-highlight-color: transparent;
+}
 /* ==============================
    SECTIONS
 ============================== */
@@ -563,7 +632,17 @@ footer {
 .hamburger.active span:nth-child(3) {
   transform: rotate(-45deg) translateY(-8px);
 }
+/* Remove tap highlight from hamburger menu */
+.hamburger,
+.hamburger span {
+  -webkit-tap-highlight-color: transparent;
+}
 
+/* Prevent grey flash on tap */
+.hamburger {
+  user-select: none;
+  -webkit-user-select: none;
+}
 
 /* =============================
    MODAL OVERLAY
@@ -690,6 +769,35 @@ footer {
     font-size: 1.5rem;
   }
 }
+  
+/* Cart modal buttons */
+#cart-items button {
+  background: var(--charcoal);
+  color: var(--white);
+  border: 1.5px solid var(--yellow);
+  padding: 0.25rem 0.55rem;
+  margin-left: 0.3rem;
+  font-weight: 900;
+  border-radius: 4px;
+  cursor: pointer;
+  min-width: 28px;
+}
+
+/* + button */
+#cart-items button:nth-child(2) {
+  background: var(--yellow);
+  color: #000;
+}
+
+/* remove (×) */
+#cart-items button:last-child {
+  background: transparent;
+  border-color: var(--red);
+  color: var(--red);
+}
+#cart-items button:active {
+  transform: scale(0.92);
+}
 </style>  
   
   
@@ -705,9 +813,9 @@ footer {
 </div>
 
 <ul class="nav-links" id="navLinks">
-<li><a href="#about">About</a></li>
 <li><a href="#menu">Menu</a></li>
 <li><a href="#order">Order</a></li>
+<li><a href="#about">About</a></li>
 <li><a href="#map">Map</a></li>
 </ul>
 
@@ -727,6 +835,9 @@ footer {
   <p class="hero-subline">
     Advance Order Available
   </p>
+  <p class="hero-usp">
+    Crispy fried chicken • Burgers • Combos • Uluberia
+  </p>
 
   <div class="hero-actions">
     <div class="hero-phone">
@@ -739,6 +850,47 @@ footer {
   </div>
 </section>
 
+
+<!-- BEST SELLER -->
+<section id="best-seller" class="fade-up">
+  <div class="container">
+    <div class="section-header">
+      <h2>Best Sellers</h2>
+      <p>Most ordered items</p>
+    </div>
+
+    <div class="menu-grid">
+      <div class="menu-card">
+        <h3>Customer Favourites</h3>
+
+        <div class="menu-item">
+          <span>Chicken Popcorn L</span>
+          <div class="menu-action">
+            <span class="item-price">₹120</span>
+            <button onclick="addToCart('Chicken Popcorn L',120)">+</button>
+          </div>
+        </div>
+
+        <div class="menu-item">
+          <span>Chicken Burger</span>
+          <div class="menu-action">
+            <span class="item-price">₹60</span>
+            <button onclick="addToCart('Chicken Burger',60)">+</button>
+          </div>
+        </div>
+
+        <div class="menu-item">
+          <span>Combo 1</span>
+          <div class="menu-action">
+            <span class="item-price">₹230</span>
+            <button onclick="addToCart('Combo 1',230)">+</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
 <!-- MENU (FULL MENU) -->
 <section id="menu" class="fade-up">
   <div class="container">
@@ -945,6 +1097,21 @@ footer {
     </p>
   </div>
 </section>
+<!-- REVIEW -->
+<section id="trust" class="fade-up">
+  <div class="container">
+    <div class="section-header">
+      <h2>Why People Trust SFC</h2>
+      <p>Local favourite in Uluberia</p>
+    </div>
+
+    <p style="text-align:center;color:#ccc;max-width:800px;margin:auto;">
+      ⭐ 4.3 Google Rating based on real customer reviews<br>
+      Serving Uluberia since 2022<br>
+      Freshly prepared • Hygienic kitchen • Honest pricing
+    </p>
+  </div>
+</section>
 <!-- MAP -->
 <section id="map" class="fade-up">
 <div class="container">
@@ -954,11 +1121,16 @@ footer {
 </div>
 <iframe class="map-box" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3686.9555130656154!2d88.0992016!3d22.468306!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a0287566a72bbc9%3A0xcc33a88acf7e5dd7!2sSFC%20-%20Spezia%20Fried%20Chicken!5e0!3m2!1sen!2sin!4v1766993485391!5m2!1sen!2sin" width="100%" loading="lazy"></iframe>
 </div>
+<div style="text-align:center;margin-top:1.5rem;">
+  <a href="https://maps.app.goo.gl/nk7aygqWqXXiuAfL9" class="btn btn-secondary">
+    Get Directions
+  </a>
+</div>
 </section>
 <!-- STICKY CART BAR -->
 <div id="cart-bar">
   <span id="cart-summary">0 items • ₹0</span>
-  <button onclick="checkout()">Checkout</button>
+  <button onclick="openCartModal()">Checkout</button>
 </div>
 
 <div id="order-modal" class="modal">
@@ -972,9 +1144,40 @@ footer {
     </div>
   </div>
 </div>
+<div id="cart-modal" class="modal">
+  <div class="modal-box" style="max-width:520px;">
+    <h3>Your Cart</h3>
+
+    <div id="cart-items" style="margin-top:1rem;"></div>
+
+    <div style="margin-top:1.2rem;text-align:right;font-weight:800;">
+      Total: ₹<span id="cart-total">0</span>
+    </div>
+
+    <div class="modal-actions">
+      <button onclick="closeCartModal()">Close</button>
+      <button onclick="proceedToDetails()">Proceed</button>
+    </div>
+  </div>
+</div> 
+  
+<div id="empty-cart-modal" class="modal">
+  <div class="modal-box" style="max-width:380px;text-align:center;">
+    <h3>Cart is Empty</h3>
+    <p style="color:#ccc;margin:1rem 0;">
+      Please add items from the menu before checkout.
+    </p>
+
+    <div class="modal-actions">
+      <button onclick="closeEmptyCart()">Okay</button>
+    </div>
+  </div>
+</div>
   
 <footer>
-<p>© SFC – Spezia Fried Chicken | Uluberia</p>
+  <p>SFC – Spezia Fried Chicken</p>
+  <p>Uluberia, Howrah • Open 3 PM – 10 PM</p>
+  <p>© 2025 All Rights Reserved</p>
 </footer>
 
 <script>
@@ -1033,9 +1236,10 @@ function updateCartBar() {
 ============================= */
 function checkout() {
   if (!cart.length) {
-    alert("Cart empty");
-    return;
-  }
+  document.getElementById("empty-cart-modal").classList.add("show");
+  return;
+}
+  
   document.getElementById("order-modal").classList.add("show");
 }
 
@@ -1068,7 +1272,9 @@ function confirmOrder() {
     "_blank"
   );
 }
-
+function closeEmptyCart() {
+  document.getElementById("empty-cart-modal").classList.remove("show");
+}
 /* =============================
    FADE UP FORCE SHOW
 ============================= */
@@ -1125,7 +1331,58 @@ if (hamburger && navLinks) {
     });
   });
 }
+function openCartModal() {
+  const modal = document.getElementById("cart-modal");
+  const itemsBox = document.getElementById("cart-items");
+  const totalBox = document.getElementById("cart-total");
 
+  itemsBox.innerHTML = "";
+  let total = 0;
+
+  cart.forEach((item, index) => {
+    total += item.price * item.qty;
+
+    itemsBox.innerHTML += `
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.6rem;">
+        <div>
+          <strong>${item.name}</strong><br>
+          ₹${item.price} × ${item.qty}
+        </div>
+        <div>
+          <button onclick="changeQty(${index},-1)">−</button>
+          <button onclick="changeQty(${index},1)">+</button>
+          <button onclick="removeItem(${index})">✕</button>
+        </div>
+      </div>
+    `;
+  });
+
+  totalBox.textContent = total;
+  modal.classList.add("show");
+}
+function changeQty(index, delta) {
+  cart[index].qty += delta;
+  if (cart[index].qty <= 0) {
+    cart.splice(index, 1);
+  }
+  updateCartBar();
+  openCartModal();
+}
+
+function removeItem(index) {
+  cart.splice(index, 1);
+  updateCartBar();
+  openCartModal();
+}
+
+function closeCartModal() {
+  document.getElementById("cart-modal").classList.remove("show");
+}
+
+function proceedToDetails() {
+  closeCartModal();
+  checkout(); // existing details modal
+}
 </script>
   
 </body>

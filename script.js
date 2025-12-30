@@ -224,6 +224,3 @@ function proceedToDetails() {
   closeCartModal();
   checkout(); // existing details modal
 }
-
-
-

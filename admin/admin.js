@@ -125,14 +125,9 @@ function renderButtons(id, status) {
    ACTIONS
 ============================= */
 function acceptOrder(id) {
-  db.collection("orders").doc(id).update({ status: "accepted" });
-
-  // WhatsApp alert (admin)
-  const msg = "New order accepted. Check admin panel.";
-  window.open(
-    "https://wa.me/919674419537?text=" + encodeURIComponent(msg),
-    "_blank"
-  );
+  db.collection("orders").doc(id).update({
+    status: "accepted"
+  });
 }
 
 function completeOrder(id) {

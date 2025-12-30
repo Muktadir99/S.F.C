@@ -5,13 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SFC Admin Panel</title>
 
-  <!-- CSS -->
+  <!-- Main site + Admin CSS -->
   <link rel="stylesheet" href="../style.css">
   <link rel="stylesheet" href="admin.css">
-
-  <!-- PWA -->
-  <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#f2c400">
 
   <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -22,18 +18,19 @@
 
 <section style="padding:2rem;max-width:900px;margin:auto;">
 
-  <!-- ENABLE ALERTS -->
-  <button id="enableAlerts" class="enable-alerts">
-    Enable Alerts
-  </button>
-
   <h2 style="letter-spacing:1px;">Incoming Orders</h2>
 
   <!-- STATUS TABS -->
   <div class="admin-tabs">
-    <button onclick="setFilter('pending')">Pending</button>
-    <button onclick="setFilter('accepted')">Accepted</button>
-    <button onclick="setFilter('completed')">Completed</button>
+    <button data-status="pending" onclick="setFilter('pending')">
+      Pending
+    </button>
+    <button data-status="accepted" onclick="setFilter('accepted')">
+      Accepted
+    </button>
+    <button data-status="completed" onclick="setFilter('completed')">
+      Completed
+    </button>
   </div>
 
   <!-- ORDERS LIST -->
@@ -43,14 +40,8 @@
 
 </section>
 
-<!-- SOUND -->
-<audio id="ding" preload="auto">
-  <source src="https://assets.mixkit.co/sfx/preview/mixkit-bell-notification-933.mp3" type="audio/mpeg">
-</audio>
-
-<!-- JS -->
+<!-- Admin Logic -->
 <script src="admin.js"></script>
-<script src="/pwa.js"></script>
 
 </body>
 </html>

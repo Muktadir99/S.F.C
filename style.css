@@ -787,3 +787,46 @@ footer {
   transform: scale(0.92);
 }
 
+/* =============================
+   ADMIN PANEL POLISH
+============================= */
+
+.admin-tabs {
+  display: flex;
+  gap: 0.6rem;
+  margin-bottom: 1.5rem;
+}
+
+.admin-tabs button {
+  background: #1b1b1b;
+  color: #ccc;
+  border: 2px solid #333;
+  padding: 0.45rem 0.9rem;
+  font-weight: 700;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.admin-tabs button:hover {
+  border-color: #f2c400;
+  color: #fff;
+}
+
+#orders > div {
+  border-radius: 10px;
+}
+#orders button {
+  background: #f2c400;
+  color: #000;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  font-weight: 800;
+  border-radius: 6px;
+  margin-right: 0.4rem;
+}
+
+#orders button[disabled] {
+  background: #333;
+  color: #999;
+}

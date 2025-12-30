@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en-IN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SFC Admin Panel</title>
+
+  <!-- Main site CSS -->
+  <link rel="stylesheet" href="../style.css">
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+</head>
+
+<body>
+
+<section style="padding:2rem;max-width:900px;margin:auto;">
+  <h2 style="margin-bottom:1rem;">Incoming Orders</h2>
+
+  <div id="orders">
+    <p style="color:#aaa;">Loading orders...</p>
+  </div>
+</section>
+
+<!-- Admin logic -->
+<script src="admin.js"></script>
+</body>
+</html>

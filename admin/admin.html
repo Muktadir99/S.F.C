@@ -1,3 +1,14 @@
+<button id="enableAlerts" style="
+  margin-bottom:1rem;
+  background:#f2c400;
+  color:#000;
+  border:none;
+  padding:0.5rem 1rem;
+  font-weight:800;
+  border-radius:6px;
+">
+  Enable Alerts
+</button>
 <!DOCTYPE html>
 <html lang="en-IN">
 <head>
@@ -7,7 +18,9 @@
 
   <!-- Main site CSS -->
   <link rel="stylesheet" href="../style.css">
-
+  <link rel="stylesheet" href="admin.css">
+  <link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#f2c400">
   <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -16,12 +29,27 @@
 <body>
 
 <section style="padding:2rem;max-width:900px;margin:auto;">
-  <h2 style="margin-bottom:1rem;">Incoming Orders</h2>
 
+  <h2 style="letter-spacing:1px;">Incoming Orders</h2>
+
+  <!-- STATUS TABS -->
+  <div class="admin-tabs">
+  <button onclick="setFilter('pending')">Pending</button>
+  <button onclick="setFilter('accepted')">Accepted</button>
+  <button onclick="setFilter('completed')">Completed</button>
+</div>
+
+  <!-- ORDERS LIST -->
   <div id="orders">
     <p style="color:#aaa;">Loading orders...</p>
   </div>
+
 </section>
+
+<!-- NEW ORDER SOUND -->
+<audio id="ding" preload="auto">
+  <source src="https://assets.mixkit.co/sfx/preview/mixkit-bell-notification-933.mp3" type="audio/mpeg">
+</audio>
 
 <!-- Admin logic -->
 <script src="admin.js"></script>

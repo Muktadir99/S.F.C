@@ -1,0 +1,98 @@
+/* =============================
+   ADMIN PANEL BASE
+============================= */
+
+body {
+  font-size: 15px;
+  background: #0f0f0f;
+}
+
+/* =============================
+   HEADING
+============================= */
+
+h2 {
+  letter-spacing: 1px;
+  margin-bottom: 1rem;
+}
+
+/* =============================
+   TABS
+============================= */
+
+.admin-tabs {
+  display: flex;
+  gap: 0.6rem;
+  margin-bottom: 1.5rem;
+}
+
+.admin-tabs button {
+  background: #1b1b1b;
+  color: #aaa;
+  border: 2px solid #333;
+  padding: 0.45rem 1rem;
+  font-weight: 700;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.admin-tabs button:hover {
+  border-color: #f2c400;
+  color: #fff;
+}
+
+.admin-tabs button.active {
+  background: #f2c400;
+  color: #000;
+  border-color: #f2c400;
+}
+
+/* =============================
+   ORDER CARD
+============================= */
+
+#orders > div {
+  border-radius: 14px;
+  padding: 1.2rem;
+  background: #111;
+  margin-bottom: 1.2rem;
+}
+
+/* =============================
+   ORDER BUTTONS
+============================= */
+
+#orders button {
+  background: #f2c400;
+  color: #000;
+  border: none;
+  padding: 0.45rem 0.9rem;
+  font-weight: 800;
+  border-radius: 6px;
+  margin-right: 0.4rem;
+  cursor: pointer;
+}
+
+#orders button:last-child {
+  background: #2a2a2a;
+  color: #ccc;
+}
+
+#orders button[disabled] {
+  background: #333;
+  color: #999;
+  cursor: default;
+}
+
+/* =============================
+   PHONE + TIME TEXT
+============================= */
+
+#orders strong {
+  font-size: 1rem;
+}
+
+#orders div {
+  line-height: 1.5;
+}

@@ -3,8 +3,10 @@
 ============================= */
 
 body {
-  font-size: 15px;
   background: #0f0f0f;
+  color: #eaeaea;
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
 }
 
 /* =============================
@@ -12,8 +14,9 @@ body {
 ============================= */
 
 h2 {
-  letter-spacing: 1px;
-  margin-bottom: 1rem;
+  margin-bottom: 1.2rem;
+  font-weight: 800;
+  color: #ffffff;
 }
 
 /* =============================
@@ -23,28 +26,29 @@ h2 {
 .admin-tabs {
   display: flex;
   gap: 0.6rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.6rem;
 }
 
 .admin-tabs button {
   background: #1b1b1b;
-  color: #aaa;
-  border: 2px solid #333;
+  color: #bdbdbd;
+  border: 2px solid #2a2a2a;
   padding: 0.45rem 1rem;
   font-weight: 700;
   border-radius: 999px;
   cursor: pointer;
   font-size: 0.85rem;
+  transition: all 0.25s ease;
 }
 
 .admin-tabs button:hover {
   border-color: #f2c400;
-  color: #fff;
+  color: #ffffff;
 }
 
 .admin-tabs button.active {
   background: #f2c400;
-  color: #000;
+  color: #000000;
   border-color: #f2c400;
 }
 
@@ -53,46 +57,87 @@ h2 {
 ============================= */
 
 #orders > div {
+  background: linear-gradient(180deg, #151515, #0f0f0f);
+  border: 2px solid #f2c400;
   border-radius: 14px;
   padding: 1.2rem;
-  background: #111;
   margin-bottom: 1.2rem;
+  box-shadow: 0 10px 28px rgba(0,0,0,0.45);
 }
 
 /* =============================
-   ORDER BUTTONS
+   TEXT HIERARCHY
+============================= */
+
+#orders strong {
+  font-size: 1rem;
+  color: #ffffff;
+}
+
+#orders div {
+  line-height: 1.55;
+  color: #d6d6d6;
+}
+
+/* =============================
+   ACTION BUTTONS
 ============================= */
 
 #orders button {
-  background: #f2c400;
+  background: linear-gradient(135deg, #f2c400, #d4aa00);
   color: #000;
   border: none;
   padding: 0.45rem 0.9rem;
   font-weight: 800;
   border-radius: 6px;
-  margin-right: 0.4rem;
+  margin-right: 0.45rem;
   cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
+#orders button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+}
+
+/* Secondary action (Complete) */
 #orders button:last-child {
   background: #2a2a2a;
-  color: #ccc;
+  color: #cccccc;
 }
 
+/* Disabled states */
 #orders button[disabled] {
-  background: #333;
-  color: #999;
+  background: #333333;
+  color: #999999;
   cursor: default;
+  box-shadow: none;
+  transform: none;
 }
 
 /* =============================
-   PHONE + TIME TEXT
+   EMPTY STATE
 ============================= */
 
-#orders strong {
-  font-size: 1rem;
+#orders p {
+  color: #8a8a8a;
+  font-size: 0.95rem;
 }
 
-#orders div {
-  line-height: 1.5;
+/* =============================
+   MOBILE KITCHEN FRIENDLY
+============================= */
+
+@media (max-width: 600px) {
+  body {
+    font-size: 14px;
+  }
+
+  #orders > div {
+    padding: 1rem;
+  }
+
+  .admin-tabs {
+    flex-wrap: wrap;
+  }
 }

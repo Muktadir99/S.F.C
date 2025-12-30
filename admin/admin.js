@@ -1,52 +1,3 @@
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("/sw.js");
-}
-
-/* =============================
-   STATE
-============================= */
-let alertsEnabled = false;
-let currentFilter = "pending";
-let firstLoad = true;
-
-let ding = null;
-let ordersBox = null;
-
-/* =============================
-   DOM READY
-============================= */
-document.addEventListener("DOMContentLoaded", () => {
-  ding = document.getElementById("ding");
-  ordersBox = document.getElementById("orders");
-
-  const enableBtn = document.getElementById("enableAlerts");
-
-  if (enableBtn && ding) {
-    enableBtn.addEventListener("click", () => {
-      alertsEnabled = true;
-
-      // unlock audio (required by mobile browsers)
-      ding.play()
-        .then(() => {
-          ding.pause();
-          ding.currentTime = 0;
-        })
-        .catch(() => {});
-
-      // vibration test
-      if (navigator.vibrate) {
-        navigator.vibrate(200);
-      }
-
-      enableBtn.textContent = "Alerts Enabled ✔️";
-      enableBtn.disabled = true;
-    });
-  }
-
-  // default tab
-  setFilter("pending");
-});
-
 /* =============================
    FIREBASE INIT
 ============================= */
@@ -63,7 +14,13 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
 /* =============================
-   FILTER CONTROL
+   STATE
+============================= */
+let currentFilter = "pending";
+const ordersBox = document.getElementById("orders");
+
+/* =============================
+   TAB SWITCH (FIXED)
 ============================= */
 function setFilter(status) {
   currentFilter = status;
@@ -71,10 +28,17 @@ function setFilter(status) {
   document.querySelectorAll(".admin-tabs button").forEach(btn => {
     btn.classList.toggle(
       "active",
-      btn.getAttribute("data-status") === status
+      btn.dataset.status === status
     );
   });
+
+  renderOrders(latestSnapshot);
 }
+
+/* =============================
+   SNAPSHOT CACHE
+============================= */
+let latestSnapshot = [];
 
 /* =============================
    LIVE ORDERS LISTENER
@@ -82,69 +46,62 @@ function setFilter(status) {
 db.collection("orders")
   .orderBy("createdAt", "desc")
   .onSnapshot(snapshot => {
-
-    // sound + vibration on new order
-    if (
-      alertsEnabled &&
-      !firstLoad &&
-      snapshot.docChanges().some(c => c.type === "added")
-    ) {
-      if (ding) ding.play();
-      if (navigator.vibrate) {
-        navigator.vibrate([200, 100, 200]);
-      }
-    }
-    firstLoad = false;
-
-    if (!ordersBox) return;
-    ordersBox.innerHTML = "";
-
-    let hasOrders = false;
-
-    snapshot.forEach(doc => {
-      const order = doc.data();
-      if (order.status !== currentFilter) return;
-
-      hasOrders = true;
-
-      let itemsHtml = "";
-      order.items.forEach(item => {
-        itemsHtml += `<div>${item.name} × ${item.qty}</div>`;
-      });
-
-      const time = order.createdAt
-        ? new Date(order.createdAt.seconds * 1000).toLocaleTimeString()
-        : "";
-
-      ordersBox.innerHTML += `
-        <div style="
-          border:2px solid #f2c400;
-          padding:1.2rem;
-          margin-bottom:1.2rem;
-          background:#111;
-          border-radius:12px;
-        ">
-          <strong>${order.name}</strong><br>
-          📞 ${order.phone}<br>
-          🕒 ${time}<br><br>
-
-          ${itemsHtml}
-
-          <br>
-          <strong>Total: ₹${order.total}</strong><br><br>
-
-          ${renderButtons(doc.id, order.status)}
-        </div>
-      `;
-    });
-
-    if (!hasOrders) {
-      ordersBox.innerHTML = `<p style="color:#aaa;">No ${currentFilter} orders</p>`;
-    }
+    latestSnapshot = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+    renderOrders(latestSnapshot);
   });
 
 /* =============================
-   BUTTON RENDER
+   RENDER ORDERS
+============================= */
+function renderOrders(orders) {
+  ordersBox.innerHTML = "";
+
+  const filtered = orders.filter(o => o.status === currentFilter);
+
+  if (!filtered.length) {
+    ordersBox.innerHTML =
+      `<p style="color:#aaa;">No ${currentFilter} orders</p>`;
+    return;
+  }
+
+  filtered.forEach(order => {
+    let itemsHtml = "";
+    order.items.forEach(item => {
+      itemsHtml += `<div>${item.name} × ${item.qty}</div>`;
+    });
+
+    const time = order.createdAt
+      ? new Date(order.createdAt.seconds * 1000).toLocaleTimeString()
+      : "";
+
+    ordersBox.innerHTML += `
+      <div style="
+        border:2px solid #f2c400;
+        padding:1.2rem;
+        margin-bottom:1.2rem;
+        background:#111;
+        border-radius:12px;
+      ">
+        <strong>${order.name}</strong><br>
+        📞 ${order.phone}<br>
+        🕒 ${time}<br><br>
+
+        ${itemsHtml}
+
+        <br>
+        <strong>Total: ₹${order.total}</strong><br><br>
+
+        ${renderButtons(order.id, order.status)}
+      </div>
+    `;
+  });
+}
+
+/* =============================
+   BUTTONS
 ============================= */
 function renderButtons(id, status) {
   if (status === "pending") {
@@ -169,10 +126,22 @@ function renderButtons(id, status) {
 ============================= */
 function acceptOrder(id) {
   db.collection("orders").doc(id).update({ status: "accepted" });
+
+  // WhatsApp alert (admin)
+  const msg = "New order accepted. Check admin panel.";
+  window.open(
+    "https://wa.me/919674419537?text=" + encodeURIComponent(msg),
+    "_blank"
+  );
 }
 
 function completeOrder(id) {
   db.collection("orders").doc(id).update({ status: "completed" });
 }
 
-
+/* =============================
+   DEFAULT LOAD
+============================= */
+document.addEventListener("DOMContentLoaded", () => {
+  setFilter("pending");
+});

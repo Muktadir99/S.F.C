@@ -1,7 +1,8 @@
 {
   "name": "SFC Admin Panel",
   "short_name": "SFC Admin",
-  "start_url": "/admin/admin.html",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#0f0f0f",
   "theme_color": "#f2c400",

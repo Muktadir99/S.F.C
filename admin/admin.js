@@ -125,8 +125,43 @@ function renderButtons(id, status) {
    ACTIONS
 ============================= */
 function acceptOrder(id) {
-  db.collection("orders").doc(id).update({
-    status: "accepted"
+  db.collection("orders").doc(id).get().then(doc => {
+    if (!doc.exists) return;
+
+    const order = doc.data();
+    const customerPhone = order.phone; // 10-digit
+    const totalAmount = order.total;   // exact amount
+    const customerName = order.name || "Customer";
+
+    // 🔒 Update order status first
+    db.collection("orders").doc(id).update({
+      status: "accepted"
+    });
+
+    // 💳 UPI deep link (amount locked)
+    const upiId = "muktadir-1@ptaxis"; // 🔁 CHANGE THIS
+    const upiLink =
+      `upi://pay?pa=${encodeURIComponent(upiId)}` +
+      `&pn=${encodeURIComponent("SFC – Spezia Fried Chicken")}` +
+      `&am=${encodeURIComponent(totalAmount)}` +
+      `&cu=INR`;
+
+    // 📩 WhatsApp message (customer)
+    const msg =
+      `🍗 SFC – Spezia Fried Chicken\n\n` +
+      `Hello ${customerName} 👋\n` +
+      `Your order has been ACCEPTED ✅\n\n` +
+      `Total amount: ₹${totalAmount}\n\n` +
+      `Please complete payment using the link below:\n` +
+      `${upiLink}\n\n` +
+      `After payment, please send the screenshot here.\n\n` +
+      `Thank you!`;
+
+    // 📲 Open WhatsApp to customer (manual send = safe)
+    window.open(
+      `https://wa.me/91${customerPhone}?text=${encodeURIComponent(msg)}`,
+      "_blank"
+    );
   });
 }
 

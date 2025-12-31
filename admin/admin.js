@@ -151,37 +151,41 @@ function renderOrders(orders) {
   }
 
   filtered.forEach(order => {
-    let itemsHtml = "";
+  let itemsHtml = "";
+
+  if (Array.isArray(order.items)) {
     order.items.forEach(item => {
       itemsHtml += `<div>${item.name} × ${item.qty}</div>`;
     });
+  } else {
+    itemsHtml = `<div>${order.name} × ${order.qty || 1}</div>`;
+  }
 
-    const time = order.createdAt
-      ? new Date(order.createdAt.seconds * 1000).toLocaleTimeString()
-      : "";
+  const time = order.createdAt
+    ? new Date(order.createdAt.seconds * 1000).toLocaleTimeString()
+    : "";
 
-    ordersBox.innerHTML += `
-      <div style="
-        border:2px solid #f2c400;
-        padding:1.2rem;
-        margin-bottom:1.2rem;
-        background:#111;
-        border-radius:12px;
-      ">
-        <strong>${order.name}</strong><br>
-        📞 ${order.phone}<br>
-        🕒 ${time}<br><br>
+  ordersBox.innerHTML += `
+    <div style="
+      border:2px solid #f2c400;
+      padding:1.2rem;
+      margin-bottom:1.2rem;
+      background:#111;
+      border-radius:12px;
+    ">
+      <strong>${order.name}</strong><br>
+      📞 ${order.phone}<br>
+      🕒 ${time}<br><br>
 
-        ${itemsHtml}
+      ${itemsHtml}
 
-        <br>
-        <strong>Total: ₹${order.total}</strong><br><br>
+      <br>
+      <strong>Total: ₹${order.total}</strong><br><br>
 
-        ${renderButtons(order.id, order.status)}
-      </div>
-    `;
-  });
-}
+      ${renderButtons(order.id, order.status)}
+    </div>
+  `;
+});
 
 /* =============================
    BUTTONS

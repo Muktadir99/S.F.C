@@ -141,3 +141,61 @@ h2 {
     flex-wrap: wrap;
   }
 }
+/* =============================
+   LOGIN TABLE
+============================= */
+.login-box {
+  max-width: 360px;
+  margin: 20vh auto;
+  background: #111;
+  padding: 2rem;
+  border-radius: 14px;
+  border: 2px solid #f2c400;
+  text-align: center;
+}
+
+.login-box h2 {
+  margin-bottom: 1rem;
+}
+
+.login-box input {
+  width: 100%;
+  margin-bottom: 0.8rem;
+  padding: 0.6rem;
+  background: #000;
+  border: 1px solid #333;
+  color: #fff;
+  border-radius: 6px;
+}
+
+.login-box button {
+  width: 100%;
+  background: #f2c400;
+  color: #000;
+  border: none;
+  padding: 0.6rem;
+  font-weight: 800;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+#loginError {
+  color: #ff6b6b;
+  margin-top: 0.6rem;
+  font-size: 0.9rem;
+}
+
+.admin-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logout-btn {
+  background: #2a2a2a;
+  color: #ccc;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+}

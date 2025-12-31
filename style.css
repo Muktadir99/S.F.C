@@ -830,3 +830,9 @@ footer {
   background: #333;
   color: #999;
 }
+
+/* FORCE VISIBILITY FOR ALL DEVICES */
+.fade-up {
+  opacity: 1 !important;
+  transform: none !important;
+}

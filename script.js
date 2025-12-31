@@ -1,17 +1,4 @@
-/* =============================
-   FIREBASE INIT
-============================= */
-const firebaseConfig = {
-  apiKey: "AIzaSyCcGt23_4BokfQUrScFs88KMqn-sphaXbA",
-  authDomain: "sfc-uluberia.firebaseapp.com",
-  projectId: "sfc-uluberia",
-  storageBucket: "sfc-uluberia.firebasestorage.app",
-  messagingSenderId: "286996634308",
-  appId: "1:286996634308:web:6ec52f89dde053bd830791"
-};
 
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
 
 /* =============================
    GLOBAL STATE
@@ -77,9 +64,17 @@ function checkout() {
     document.getElementById("empty-cart-modal").classList.add("show");
     return;
   }
-  document.getElementById("order-modal").classList.add("show");
+
+  const user = firebase.auth().currentUser;
+
+  if (!user) {
+  localStorage.setItem("afterLogin", "/index.html?checkout=true");
+  window.location.href = "/login.html";
+  return;
 }
 
+  document.getElementById("order-modal").classList.add("show");
+}
 function closeModal() {
   document.getElementById("order-modal").classList.remove("show");
 }
@@ -92,7 +87,7 @@ function closeEmptyCart() {
    CONFIRM ORDER (SAFE)
 ============================= */
 function confirmOrder() {
-  if (orderSubmitting) return; // HARD LOCK
+  if (orderSubmitting) return;
   orderSubmitting = true;
 
   const btn = document.getElementById("confirmBtn");
@@ -110,32 +105,13 @@ function confirmOrder() {
     return;
   }
 
-  const orderData = {
-    name: name || "Guest",
-    phone,
-    items: cart.map(i => ({ ...i })), // clone safety
-    total: cart.reduce((sum, i) => sum + i.qty * i.price, 0),
-    status: "pending",
-    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-  };
+  if (typeof window.placeOrderToFirebase !== "function") {
+    alert("System not ready. Please try again.");
+    resetConfirmBtn();
+    return;
+  }
 
-  db.collection("orders")
-    .add(orderData)
-    .then(() => {
-      if (btn) btn.innerText = "Order Placed ✔️";
-
-      setTimeout(() => {
-        closeModal();
-        cart = [];
-        updateCartBar();
-        orderSubmitting = false;
-      }, 800);
-    })
-    .catch(err => {
-      console.error(err);
-      alert("Order failed. Please try again.");
-      resetConfirmBtn();
-    });
+  window.placeOrderToFirebase({ name, phone, cart });
 }
 
 function resetConfirmBtn() {

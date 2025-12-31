@@ -1,11 +1,10 @@
-
 /* =============================
    FIREBASE INIT (ONCE ONLY)
 ============================= */
 const firebaseConfig = {
   apiKey: "AIzaSyCcGt23_4BokfQUrScFs88KMqn-sphaXbA",
   authDomain: "sfc-uluberia.firebaseapp.com",
-  projectId: "sfc-uluberia",
+  projectId: "sfc-uluberia"
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -14,7 +13,13 @@ const auth = firebase.auth();
 const db = firebase.firestore();
 
 /* =============================
-   AUTH HANDLING (SAFE)
+   GLOBAL ALERT STATE
+============================= */
+let isFirstSnapshot = true;
+let lastAlertedOrderId = null;
+
+/* =============================
+   AUTH HANDLING
 ============================= */
 auth.onAuthStateChanged(user => {
   const loginBox = document.getElementById("loginBox");
@@ -25,11 +30,16 @@ auth.onAuthStateChanged(user => {
   if (user) {
     loginBox.style.display = "none";
     adminPanel.style.display = "block";
-    startOrderListener(); // 🔑 start listening only after login
+
+    if ("Notification" in window && Notification.permission !== "granted") {
+      Notification.requestPermission();
+    }
+
+    startOrderListener();
   } else {
     loginBox.style.display = "block";
     adminPanel.style.display = "none";
-    ordersBox.innerHTML = ""; // clear orders on logout
+    ordersBox.innerHTML = "";
   }
 });
 
@@ -70,19 +80,58 @@ function setFilter(status) {
 }
 
 /* =============================
+   ALERT SYSTEM (FOREGROUND SAFE)
+============================= */
+function triggerOrderAlert(orderId) {
+  if (document.hidden) return;
+  if (orderId === lastAlertedOrderId) return;
+
+  lastAlertedOrderId = orderId;
+
+  if (navigator.vibrate) {
+    navigator.vibrate([300, 150, 300]);
+  }
+
+  const audio = new Audio(
+    "https://assets.mixkit.co/sfx/preview/mixkit-bell-notification-933.mp3"
+  );
+  audio.volume = 1;
+  audio.play().catch(() => {});
+
+  if ("Notification" in window && Notification.permission === "granted") {
+    new Notification("🔔 New Order Received", {
+      body: "Open admin panel to view details",
+      icon: "/icons/icon-192.png"
+    });
+  }
+}
+
+/* =============================
    ORDER LISTENER (AUTH-GATED)
 ============================= */
 function startOrderListener() {
-  if (unsubscribeOrders) return; // already listening
+  if (unsubscribeOrders) return;
 
   unsubscribeOrders = db
     .collection("orders")
     .orderBy("createdAt", "desc")
     .onSnapshot(snapshot => {
+
+      if (isFirstSnapshot) {
+        isFirstSnapshot = false;
+      } else {
+        snapshot.docChanges().forEach(change => {
+          if (change.type === "added") {
+            triggerOrderAlert(change.doc.id);
+          }
+        });
+      }
+
       latestSnapshot = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
       }));
+
       renderOrders(latestSnapshot);
     });
 }
@@ -163,7 +212,7 @@ function acceptOrder(id) {
     if (!doc.exists) return;
 
     const order = doc.data();
-    if (order.status !== "pending") return; // 🔒 hard lock
+    if (order.status !== "pending") return;
 
     const customerPhone = order.phone;
     const totalAmount = order.total;
@@ -171,7 +220,7 @@ function acceptOrder(id) {
 
     db.collection("orders").doc(id).update({ status: "accepted" });
 
-    const upiId = "muktadir-1@ptaxis"; // change if needed
+    const upiId = "muktadir-1@ptaxis";
     const upiLink =
       `upi://pay?pa=${encodeURIComponent(upiId)}` +
       `&pn=${encodeURIComponent("SFC – Spezia Fried Chicken")}` +

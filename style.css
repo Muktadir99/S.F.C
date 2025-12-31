@@ -102,9 +102,6 @@ nav {
 }
 
 .hamburger {
-  display: none;
-  font-size: 1.8rem;
-  color: var(--yellow);
   cursor: pointer;
 }
 

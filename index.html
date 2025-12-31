@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en-IN">
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,6 +11,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css"> 
+  <!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+ 
 </head>
 
 <body>
@@ -401,8 +407,80 @@
   <p>Uluberia, Howrah • Open 3 PM – 10 PM</p>
   <p>© 2025 All Rights Reserved</p>
 </footer>
+<!-- Firebase SDKs -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>  
-<script src="script.js"></script> 
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyCcGt23_4BokfQUrScFs88KMqn-sphaXbA",
+    authDomain: "sfc-uluberia.firebaseapp.com",
+    projectId: "sfc-uluberia",
+    storageBucket: "sfc-uluberia.appspot.com",
+    messagingSenderId: "286996634308",
+    appId: "1:286996634308:web:6ec52f89dde053bd830791"
+  };
+
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
+
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+
+</script>
+<script>
+  function placeOrderToFirebase({ name, phone, cart }) {
+    const user = firebase.auth().currentUser;
+
+    if (!user) {
+      alert("Please login with Google to place order");
+      resetConfirmBtn();
+      return;
+    }
+
+    const orderData = {
+      name: name || user.displayName || "Customer",
+      phone: phone,
+      items: cart.map(i => ({ ...i })),
+      total: cart.reduce((s, i) => s + i.qty * i.price, 0),
+      status: "pending",
+      userId: user.uid,
+      userEmail: user.email,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+
+    db.collection("orders")
+      .add(orderData)
+      .then(() => {
+        const btn = document.getElementById("confirmBtn");
+        if (btn) btn.innerText = "Order Placed ✔️";
+
+        setTimeout(() => {
+          closeModal();
+          cart = [];
+          updateCartBar();
+          orderSubmitting = false;
+        }, 800);
+      })
+      .catch(() => {
+        alert("Order failed. Please try again.");
+        resetConfirmBtn();
+      });
+  }
+</script>
+<script>
+  auth.onAuthStateChanged(user => {
+    if (user && location.search.includes("checkout")) {
+      const modal = document.getElementById("order-modal");
+      if (modal) {
+        modal.classList.add("show");
+      }
+    }
+  });
+</script>
+<!-- NOW load your main JS -->
+<script src="script.js"></script>
 </body>
 </html>

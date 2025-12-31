@@ -1,44 +1,63 @@
 /* =============================
-   FIREBASE INIT
+   FIREBASE INIT (ONCE ONLY)
 ============================= */
 const firebaseConfig = {
   apiKey: "AIzaSyCcGt23_4BokfQUrScFs88KMqn-sphaXbA",
   authDomain: "sfc-uluberia.firebaseapp.com",
   projectId: "sfc-uluberia",
-  storageBucket: "sfc-uluberia.firebasestorage.app",
-  messagingSenderId: "286996634308",
-  appId: "1:286996634308:web:6ec52f89dde053bd830791"
 };
 
 firebase.initializeApp(firebaseConfig);
+
+const auth = firebase.auth();
 const db = firebase.firestore();
+
+/* =============================
+   AUTH HANDLING
+============================= */
+auth.onAuthStateChanged(user => {
+  if (user) {
+    document.getElementById("loginBox").style.display = "none";
+    document.getElementById("adminPanel").style.display = "block";
+  } else {
+    document.getElementById("loginBox").style.display = "block";
+    document.getElementById("adminPanel").style.display = "none";
+  }
+});
+
+function login() {
+  const email = document.getElementById("loginEmail").value.trim();
+  const pass = document.getElementById("loginPassword").value;
+
+  auth.signInWithEmailAndPassword(email, pass)
+    .catch(err => {
+      document.getElementById("loginError").innerText = err.message;
+    });
+}
+
+function logout() {
+  auth.signOut();
+}
 
 /* =============================
    STATE
 ============================= */
 let currentFilter = "pending";
+let latestSnapshot = [];
 const ordersBox = document.getElementById("orders");
 
 /* =============================
-   TAB SWITCH (FIXED)
+   TAB SWITCH
 ============================= */
 function setFilter(status) {
   currentFilter = status;
 
   document.querySelectorAll(".admin-tabs button").forEach(btn => {
-    btn.classList.toggle(
-      "active",
-      btn.dataset.status === status
-    );
+    btn.classList.toggle("active", btn.dataset.status === status);
   });
 
   renderOrders(latestSnapshot);
 }
-
-/* =============================
-   SNAPSHOT CACHE
-============================= */
-let latestSnapshot = [];
 
 /* =============================
    LIVE ORDERS LISTENER
@@ -62,8 +81,7 @@ function renderOrders(orders) {
   const filtered = orders.filter(o => o.status === currentFilter);
 
   if (!filtered.length) {
-    ordersBox.innerHTML =
-      `<p style="color:#aaa;">No ${currentFilter} orders</p>`;
+    ordersBox.innerHTML = `<p style="color:#aaa;">No ${currentFilter} orders</p>`;
     return;
   }
 
@@ -129,24 +147,21 @@ function acceptOrder(id) {
     if (!doc.exists) return;
 
     const order = doc.data();
-    const customerPhone = order.phone; // 10-digit
-    const totalAmount = order.total;   // exact amount
+    if (order.status !== "pending") return; // prevent double accept
+
+    const customerPhone = order.phone;
+    const totalAmount = order.total;
     const customerName = order.name || "Customer";
 
-    // 🔒 Update order status first
-    db.collection("orders").doc(id).update({
-      status: "accepted"
-    });
+    db.collection("orders").doc(id).update({ status: "accepted" });
 
-    // 💳 UPI deep link (amount locked)
-    const upiId = "muktadir-1@ptaxis"; // 🔁 CHANGE THIS
+    const upiId = "muktadir-1@ptaxis"; // change if needed
     const upiLink =
       `upi://pay?pa=${encodeURIComponent(upiId)}` +
       `&pn=${encodeURIComponent("SFC – Spezia Fried Chicken")}` +
       `&am=${encodeURIComponent(totalAmount)}` +
       `&cu=INR`;
 
-    // 📩 WhatsApp message (customer)
     const msg =
       `🍗 SFC – Spezia Fried Chicken\n\n` +
       `Hello ${customerName} 👋\n` +
@@ -157,7 +172,6 @@ function acceptOrder(id) {
       `After payment, please send the screenshot here.\n\n` +
       `Thank you!`;
 
-    // 📲 Open WhatsApp to customer (manual send = safe)
     window.open(
       `https://wa.me/91${customerPhone}?text=${encodeURIComponent(msg)}`,
       "_blank"

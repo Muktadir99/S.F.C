@@ -5,7 +5,7 @@
 const firebaseConfig = {
   apiKey: "AIzaSyCcGt23_4BokfQUrScFs88KMqn-sphaXbA",
   authDomain: "sfc-uluberia.firebaseapp.com",
-  projectId: "sfc-uluberia",   // 🔥 THIS WAS WRONG
+  projectId: "sfc-uluberia",
 };
 
 firebase.initializeApp(firebaseConfig);

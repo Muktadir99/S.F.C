@@ -76,23 +76,30 @@ auth.onAuthStateChanged(user => {
     ordersBox.innerHTML = "";
 
     if (snapshot.empty) {
-      ordersBox.innerHTML = `<p style="text-align:center;color:#aaa;">No orders yet.</p>`;
+      ordersBox.innerHTML = `
+        <p style="text-align:center;color:#aaa;">
+          No orders yet.
+        </p>`;
       return;
     }
 
     snapshot.forEach(doc => {
       const o = doc.data();
 
+      const time = o.createdAt?.seconds
+        ? new Date(o.createdAt.seconds * 1000).toLocaleString()
+        : "Just now";
+
       ordersBox.innerHTML += `
         <div class="menu-card" style="margin-bottom:1.2rem;">
           <h3>₹${o.total}</h3>
+
           <p class="status ${o.status}">
             Status: ${o.status.toUpperCase()}
           </p>
+
           <p style="color:#aaa;font-size:0.9rem;">
-            ${o.createdAt?.seconds
-              ? new Date(o.createdAt.seconds * 1000).toLocaleString()
-              : ""}
+            ${time}
           </p>
         </div>
       `;

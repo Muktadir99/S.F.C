@@ -5,46 +5,43 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SFC Admin Panel</title>
 
+  <!-- Main site + Admin CSS -->
   <link rel="stylesheet" href="../style.css">
   <link rel="stylesheet" href="admin.css">
 
   <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 </head>
 
 <body>
 
-<!-- LOGIN SCREEN -->
-<section id="loginBox" class="login-box">
-  <h2>Admin Login</h2>
-  <input type="email" id="loginEmail" placeholder="Email">
-  <input type="password" id="loginPassword" placeholder="Password">
-  <button onclick="login()">Login</button>
-  <p id="loginError"></p>
-</section>
+<section style="padding:2rem;max-width:900px;margin:auto;">
 
-<!-- ADMIN PANEL -->
-<section id="adminPanel" style="display:none;padding:2rem;max-width:900px;margin:auto;">
+  <h2 style="letter-spacing:1px;">Incoming Orders</h2>
 
-  <div class="admin-top">
-    <h2>Incoming Orders</h2>
-    <button class="logout-btn" onclick="logout()">Logout</button>
-  </div>
-
+  <!-- STATUS TABS -->
   <div class="admin-tabs">
-    <button onclick="setFilter('pending')">Pending</button>
-    <button onclick="setFilter('accepted')">Accepted</button>
-    <button onclick="setFilter('completed')">Completed</button>
+    <button data-status="pending" onclick="setFilter('pending')">
+      Pending
+    </button>
+    <button data-status="accepted" onclick="setFilter('accepted')">
+      Accepted
+    </button>
+    <button data-status="completed" onclick="setFilter('completed')">
+      Completed
+    </button>
   </div>
 
+  <!-- ORDERS LIST -->
   <div id="orders">
     <p style="color:#aaa;">Loading orders...</p>
   </div>
 
 </section>
 
+<!-- Admin Logic -->
 <script src="admin.js"></script>
+
 </body>
 </html>

@@ -495,4 +495,11 @@
 <script>
   auth.onAuthStateChanged(user => {
     if (user && location.search.includes("checkout")) {
-      const modal = document.getEl
+      const modal = document.getElementById("order-modal");
+      if (modal) modal.classList.add("show");
+    }
+  });
+</script>
+<script src="script.js"></script>
+</body>
+</html>

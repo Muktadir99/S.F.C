@@ -71,38 +71,33 @@ auth.onAuthStateChanged(user => {
   }
 
   db.collection("orders")
-    .where("userId", "==", user.uid)
-    .orderBy("createdAt", "desc")
-    .onSnapshot(snapshot => {
-      ordersBox.innerHTML = "";
+  .where("userId", "==", user.uid)
+  .onSnapshot(snapshot => {
+    ordersBox.innerHTML = "";
 
-      if (snapshot.empty) {
-        ordersBox.innerHTML = `
-          <p style="text-align:center;color:#aaa;">
-            No orders yet.
-          </p>`;
-        return;
-      }
+    if (snapshot.empty) {
+      ordersBox.innerHTML = `<p style="text-align:center;color:#aaa;">No orders yet.</p>`;
+      return;
+    }
 
-      snapshot.forEach(doc => {
-        const o = doc.data();
+    snapshot.forEach(doc => {
+      const o = doc.data();
 
-        ordersBox.innerHTML += `
-          <div class="menu-card" style="margin-bottom:1.2rem;">
-            <h3>₹${o.total}</h3>
-
-            <p class="status ${o.status}">
-              Status: ${o.status.toUpperCase()}
-            </p>
-
-            <p style="color:#aaa;font-size:0.9rem;">
-              ${new Date(o.createdAt.seconds * 1000).toLocaleString()}
-            </p>
-          </div>
-        `;
-      });
+      ordersBox.innerHTML += `
+        <div class="menu-card" style="margin-bottom:1.2rem;">
+          <h3>₹${o.total}</h3>
+          <p class="status ${o.status}">
+            Status: ${o.status.toUpperCase()}
+          </p>
+          <p style="color:#aaa;font-size:0.9rem;">
+            ${o.createdAt?.seconds
+              ? new Date(o.createdAt.seconds * 1000).toLocaleString()
+              : ""}
+          </p>
+        </div>
+      `;
     });
-});
+  });
 </script>
 
 <script src="script.js"></script>

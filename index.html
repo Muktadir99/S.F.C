@@ -438,55 +438,65 @@
 </script>
 <script>
   function placeOrderToFirebase({ name, phone, cart }) {
-    const user = firebase.auth().currentUser;
+  const user = firebase.auth().currentUser;
 
-    if (!user) {
-      alert("Please login with Google to place order");
-      resetConfirmBtn();
-      return;
-    }
-
-    const orderData = {
-      name: name || user.displayName || "Customer",
-      phone: phone,
-      items: cart.map(i => ({ ...i })),
-      total: cart.reduce((s, i) => s + i.qty * i.price, 0),
-      status: "pending",
-      userId: user.uid,
-      userEmail: user.email,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    };
-
-    db.collection("orders")
-      .add(orderData)
-      .then(() => {
-        const btn = document.getElementById("confirmBtn");
-        if (btn) btn.innerText = "Order Placed ✔️";
-
-        setTimeout(() => {
-          closeModal();
-          cart = [];
-          updateCartBar();
-          orderSubmitting = false;
-        }, 800);
-      })
-      .catch(() => {
-        alert("Order failed. Please try again.");
-        resetConfirmBtn();
-      });
+  // 🔒 HARD AUTH LOCK
+  if (!user) {
+    alert("Please login again");
+    resetConfirmBtn();
+    return;
   }
+
+  const orderData = {
+    // 👤 CUSTOMER INFO
+    name: name || user.displayName || "Customer",
+    phone: phone,
+
+    // 🧺 ITEMS ARRAY (MUST)
+    items: cart.map(i => ({
+      name: i.name,
+      price: i.price,
+      qty: i.qty
+    })),
+
+    // 💰 TOTAL
+    total: cart.reduce((sum, i) => sum + i.qty * i.price, 0),
+
+    // 📦 STATUS
+    status: "pending",
+
+    // 🔑 USER LINK (THIS IS THE KEY)
+    userId: user.uid,
+    userEmail: user.email,
+
+    // ⏱ TIME
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  };
+
+  db.collection("orders")
+    .add(orderData)
+    .then(() => {
+      const btn = document.getElementById("confirmBtn");
+      if (btn) btn.innerText = "Order Placed ✔️";
+
+      setTimeout(() => {
+        closeModal();
+        cart = [];
+        updateCartBar();
+        orderSubmitting = false;
+
+        // 👉 SEND USER TO MY ORDERS
+        window.location.href = "/my-orders.html";
+      }, 800);
+    })
+    .catch(err => {
+      console.error(err);
+      alert("Order failed. Try again.");
+      resetConfirmBtn();
+    });
+}
 </script>
 <script>
   auth.onAuthStateChanged(user => {
     if (user && location.search.includes("checkout")) {
-      const modal = document.getElementById("order-modal");
-      if (modal) {
-        modal.classList.add("show");
-      }
-    }
-  });
-</script>
-<!-- NOW load your main JS -->
-<script src="script.js"></script>
-</body>
-</html>
+      const modal = document.getEl

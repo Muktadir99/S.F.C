@@ -7,7 +7,9 @@ const firebaseConfig = {
   projectId: "sfc-uluberia"
 };
 
-firebase.initializeApp(firebaseConfig);
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
 
 const auth = firebase.auth();
 const db = firebase.firestore();
@@ -17,6 +19,14 @@ const db = firebase.firestore();
 ============================= */
 let isFirstSnapshot = true;
 let lastAlertedOrderId = null;
+
+/* =============================
+   STATE
+============================= */
+let currentFilter = "pending";
+let latestSnapshot = [];
+const ordersBox = document.getElementById("orders");
+let unsubscribeOrders = null;
 
 /* =============================
    AUTH HANDLING
@@ -39,10 +49,13 @@ auth.onAuthStateChanged(user => {
   } else {
     loginBox.style.display = "block";
     adminPanel.style.display = "none";
-    ordersBox.innerHTML = "";
+    if (ordersBox) ordersBox.innerHTML = "";
   }
 });
 
+/* =============================
+   LOGIN / LOGOUT
+============================= */
 function login() {
   const email = document.getElementById("loginEmail").value.trim();
   const pass = document.getElementById("loginPassword").value;
@@ -59,14 +72,6 @@ function logout() {
 }
 
 /* =============================
-   STATE
-============================= */
-let currentFilter = "pending";
-let latestSnapshot = [];
-const ordersBox = document.getElementById("orders");
-let unsubscribeOrders = null;
-
-/* =============================
    TAB SWITCH
 ============================= */
 function setFilter(status) {
@@ -80,7 +85,7 @@ function setFilter(status) {
 }
 
 /* =============================
-   ALERT SYSTEM (FOREGROUND SAFE)
+   ALERT SYSTEM
 ============================= */
 function triggerOrderAlert(orderId) {
   if (document.hidden) return;
@@ -99,7 +104,7 @@ function triggerOrderAlert(orderId) {
   audio.play().catch(() => {});
 
   if ("Notification" in window && Notification.permission === "granted") {
-    new Notification("🔔 New Order Received", {
+    new Notification("New Order Received", {
       body: "Open admin panel to view details",
       icon: "/icons/icon-192.png"
     });
@@ -107,7 +112,7 @@ function triggerOrderAlert(orderId) {
 }
 
 /* =============================
-   ORDER LISTENER (AUTH-GATED)
+   ORDER LISTENER
 ============================= */
 function startOrderListener() {
   if (unsubscribeOrders) return;
@@ -137,7 +142,7 @@ function startOrderListener() {
 }
 
 /* =============================
-   RENDER ORDERS
+   RENDER ORDERS (SAFE)
 ============================= */
 function renderOrders(orders) {
   if (!ordersBox) return;
@@ -151,41 +156,42 @@ function renderOrders(orders) {
   }
 
   filtered.forEach(order => {
-  let itemsHtml = "";
+    let itemsHtml = "";
 
-  if (Array.isArray(order.items)) {
-    order.items.forEach(item => {
-      itemsHtml += `<div>${item.name} × ${item.qty}</div>`;
-    });
-  } else {
-    itemsHtml = `<div>${order.name} × ${order.qty || 1}</div>`;
-  }
+    if (Array.isArray(order.items)) {
+      order.items.forEach(item => {
+        itemsHtml += `<div>${item.name} × ${item.qty}</div>`;
+      });
+    } else {
+      itemsHtml = `<div>${order.name} × ${order.qty || 1}</div>`;
+    }
 
-  const time = order.createdAt
-    ? new Date(order.createdAt.seconds * 1000).toLocaleTimeString()
-    : "";
+    const time = order.createdAt?.seconds
+      ? new Date(order.createdAt.seconds * 1000).toLocaleTimeString()
+      : "";
 
-  ordersBox.innerHTML += `
-    <div style="
-      border:2px solid #f2c400;
-      padding:1.2rem;
-      margin-bottom:1.2rem;
-      background:#111;
-      border-radius:12px;
-    ">
-      <strong>${order.name}</strong><br>
-      📞 ${order.phone}<br>
-      🕒 ${time}<br><br>
+    ordersBox.innerHTML += `
+      <div style="
+        border:2px solid #f2c400;
+        padding:1.2rem;
+        margin-bottom:1.2rem;
+        background:#111;
+        border-radius:12px;
+      ">
+        <strong>${order.name}</strong><br>
+        Phone: ${order.phone}<br>
+        Time: ${time}<br><br>
 
-      ${itemsHtml}
+        ${itemsHtml}
 
-      <br>
-      <strong>Total: ₹${order.total}</strong><br><br>
+        <br>
+        <strong>Total: ₹${order.total}</strong><br><br>
 
-      ${renderButtons(order.id, order.status)}
-    </div>
-  `;
-});
+        ${renderButtons(order.id, order.status)}
+      </div>
+    `;
+  });
+}
 
 /* =============================
    BUTTONS
@@ -218,31 +224,24 @@ function acceptOrder(id) {
     const order = doc.data();
     if (order.status !== "pending") return;
 
-    const customerPhone = order.phone;
-    const totalAmount = order.total;
-    const customerName = order.name || "Customer";
-
     db.collection("orders").doc(id).update({ status: "accepted" });
 
     const upiId = "muktadir-1@ptaxis";
     const upiLink =
       `upi://pay?pa=${encodeURIComponent(upiId)}` +
       `&pn=${encodeURIComponent("SFC – Spezia Fried Chicken")}` +
-      `&am=${encodeURIComponent(totalAmount)}` +
+      `&am=${encodeURIComponent(order.total)}` +
       `&cu=INR`;
 
     const msg =
-      `🍗 SFC – Spezia Fried Chicken\n\n` +
-      `Hello ${customerName} 👋\n` +
-      `Your order has been ACCEPTED ✅\n\n` +
-      `Total amount: ₹${totalAmount}\n\n` +
-      `Please complete payment using the link below:\n` +
-      `${upiLink}\n\n` +
-      `After payment, please send the screenshot here.\n\n` +
-      `Thank you!`;
+      `SFC – Spezia Fried Chicken\n\n` +
+      `Hello ${order.name}\n` +
+      `Your order has been ACCEPTED\n\n` +
+      `Total: ₹${order.total}\n\n` +
+      `Pay here:\n${upiLink}`;
 
     window.open(
-      `https://wa.me/91${customerPhone}?text=${encodeURIComponent(msg)}`,
+      `https://wa.me/91${order.phone}?text=${encodeURIComponent(msg)}`,
       "_blank"
     );
   });

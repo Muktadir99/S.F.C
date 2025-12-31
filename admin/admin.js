@@ -1,15 +1,14 @@
+
 /* =============================
    FIREBASE INIT (ONCE ONLY)
 ============================= */
 const firebaseConfig = {
   apiKey: "AIzaSyCcGt23_4BokfQUrScFs88KMqn-sphaXbA",
   authDomain: "sfc-uluberia.firebaseapp.com",
-  projectId: "sfc-uluberia.firebaseapp.com",
+  projectId: "sfc-uluberia",   // 🔥 THIS WAS WRONG
 };
 
-if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
-}
+firebase.initializeApp(firebaseConfig);
 
 const auth = firebase.auth();
 const db = firebase.firestore();

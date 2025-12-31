@@ -11,12 +11,23 @@
 
   <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 </head>
 
 <body>
 
-<section style="padding:2rem;max-width:900px;margin:auto;">
+<!-- ================= LOGIN BOX ================= -->
+<section id="loginBox" class="login-box">
+  <h2>Admin Login</h2>
+  <input type="email" id="loginEmail" placeholder="Email">
+  <input type="password" id="loginPassword" placeholder="Password">
+  <button onclick="login()">Login</button>
+  <p id="loginError"></p>
+</section>
+
+<!-- ================= ADMIN PANEL (SAME AS BEFORE) ================= -->
+<section id="adminPanel" style="display:none;padding:2rem;max-width:900px;margin:auto;">
 
   <h2 style="letter-spacing:1px;">Incoming Orders</h2>
 

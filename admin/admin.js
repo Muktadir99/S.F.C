@@ -4,24 +4,33 @@
 const firebaseConfig = {
   apiKey: "AIzaSyCcGt23_4BokfQUrScFs88KMqn-sphaXbA",
   authDomain: "sfc-uluberia.firebaseapp.com",
-  projectId: "sfc-uluberia",
+  projectId: "sfc-uluberia.firebaseapp.com",
 };
 
-firebase.initializeApp(firebaseConfig);
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
 
 const auth = firebase.auth();
 const db = firebase.firestore();
 
 /* =============================
-   AUTH HANDLING
+   AUTH HANDLING (SAFE)
 ============================= */
 auth.onAuthStateChanged(user => {
+  const loginBox = document.getElementById("loginBox");
+  const adminPanel = document.getElementById("adminPanel");
+
+  if (!loginBox || !adminPanel) return;
+
   if (user) {
-    document.getElementById("loginBox").style.display = "none";
-    document.getElementById("adminPanel").style.display = "block";
+    loginBox.style.display = "none";
+    adminPanel.style.display = "block";
+    startOrderListener(); // 🔑 start listening only after login
   } else {
-    document.getElementById("loginBox").style.display = "block";
-    document.getElementById("adminPanel").style.display = "none";
+    loginBox.style.display = "block";
+    adminPanel.style.display = "none";
+    ordersBox.innerHTML = ""; // clear orders on logout
   }
 });
 
@@ -31,7 +40,8 @@ function login() {
 
   auth.signInWithEmailAndPassword(email, pass)
     .catch(err => {
-      document.getElementById("loginError").innerText = err.message;
+      const errBox = document.getElementById("loginError");
+      if (errBox) errBox.innerText = err.message;
     });
 }
 
@@ -45,6 +55,7 @@ function logout() {
 let currentFilter = "pending";
 let latestSnapshot = [];
 const ordersBox = document.getElementById("orders");
+let unsubscribeOrders = null;
 
 /* =============================
    TAB SWITCH
@@ -60,22 +71,28 @@ function setFilter(status) {
 }
 
 /* =============================
-   LIVE ORDERS LISTENER
+   ORDER LISTENER (AUTH-GATED)
 ============================= */
-db.collection("orders")
-  .orderBy("createdAt", "desc")
-  .onSnapshot(snapshot => {
-    latestSnapshot = snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
-    renderOrders(latestSnapshot);
-  });
+function startOrderListener() {
+  if (unsubscribeOrders) return; // already listening
+
+  unsubscribeOrders = db
+    .collection("orders")
+    .orderBy("createdAt", "desc")
+    .onSnapshot(snapshot => {
+      latestSnapshot = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      renderOrders(latestSnapshot);
+    });
+}
 
 /* =============================
    RENDER ORDERS
 ============================= */
 function renderOrders(orders) {
+  if (!ordersBox) return;
   ordersBox.innerHTML = "";
 
   const filtered = orders.filter(o => o.status === currentFilter);
@@ -147,7 +164,7 @@ function acceptOrder(id) {
     if (!doc.exists) return;
 
     const order = doc.data();
-    if (order.status !== "pending") return; // prevent double accept
+    if (order.status !== "pending") return; // 🔒 hard lock
 
     const customerPhone = order.phone;
     const totalAmount = order.total;

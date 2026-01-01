@@ -71,50 +71,58 @@ auth.onAuthStateChanged(user => {
   }
 
   db.collection("orders")
-  .where("userId", "==", user.uid)
-  .orderBy("createdAt", "desc")
-  .onSnapshot(snapshot => {
-    ordersBox.innerHTML = "";
+    .where("userEmail", "==", user.email)
+    .orderBy("createdAt", "desc")
+    .onSnapshot(snapshot => {
 
-    if (snapshot.empty) {
-      ordersBox.innerHTML = `
-        <p style="text-align:center;color:#aaa;">
-          No orders yet.
-        </p>`;
-      return;
-    }
+      ordersBox.innerHTML = "";
 
-    snapshot.forEach(doc => {
-      const o = doc.data();
+      if (snapshot.empty) {
+        ordersBox.innerHTML = `
+          <p style="text-align:center;color:#aaa;">
+            No orders yet.
+          </p>`;
+        return;
+      }
 
-      const time = o.createdAt?.toDate
-        ? o.createdAt.toDate().toLocaleString()
-        : "Just now";
+      snapshot.forEach(doc => {
+        const o = doc.data();
 
-      const itemsHtml = (o.items || []).map(it =>
-        `<li>${it.name} × ${it.qty}</li>`
-      ).join("");
+        let itemsHtml = "";
+        if (Array.isArray(o.items)) {
+          o.items.forEach(i => {
+            itemsHtml += `<div>${i.name} × ${i.qty}</div>`;
+          });
+        }
 
-      ordersBox.insertAdjacentHTML("beforeend", `
-        <div class="menu-card" style="margin-bottom:1.2rem;">
-          <h3>₹${o.total}</h3>
+        const time = o.createdAt && o.createdAt.seconds
+          ? new Date(o.createdAt.seconds * 1000).toLocaleString()
+          : "Just now";
 
-          <p class="status ${o.status}">
-            Status: ${o.status.toUpperCase()}
-          </p>
+        ordersBox.innerHTML += `
+          <div class="menu-card" style="margin-bottom:1.2rem;">
+            <h3>₹${o.total}</h3>
 
-          <ul style="color:#ccc;font-size:0.9rem;margin:0.6rem 0 0.8rem;">
-            ${itemsHtml || "<li>No items</li>"}
-          </ul>
+            <div style="margin:0.6rem 0;color:#ccc;">
+              ${itemsHtml}
+            </div>
 
-          <p style="color:#888;font-size:0.85rem;">
-            ${time}
-          </p>
-        </div>
-      `);
+            <p class="status ${o.status}">
+              Status: ${o.status.toUpperCase()}
+            </p>
+
+            <p style="color:#aaa;font-size:0.9rem;">
+              ${time}
+            </p>
+          </div>
+        `;
+      });
+
     });
-  });
+});
 </script>
+<script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+<script>eruda.init();</script>
 
 <script src="script.js"></script>
 </body>

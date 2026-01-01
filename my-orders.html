@@ -71,7 +71,8 @@ auth.onAuthStateChanged(user => {
   }
 
   db.collection("orders")
-  .where("userEmail", "==", user.email)
+  .where("userId", "==", user.uid)
+  .orderBy("createdAt", "desc")
   .onSnapshot(snapshot => {
     ordersBox.innerHTML = "";
 
@@ -86,11 +87,15 @@ auth.onAuthStateChanged(user => {
     snapshot.forEach(doc => {
       const o = doc.data();
 
-      const time = o.createdAt?.seconds
-        ? new Date(o.createdAt.seconds * 1000).toLocaleString()
+      const time = o.createdAt?.toDate
+        ? o.createdAt.toDate().toLocaleString()
         : "Just now";
 
-      ordersBox.innerHTML += `
+      const itemsHtml = (o.items || []).map(it =>
+        `<li>${it.name} × ${it.qty}</li>`
+      ).join("");
+
+      ordersBox.insertAdjacentHTML("beforeend", `
         <div class="menu-card" style="margin-bottom:1.2rem;">
           <h3>₹${o.total}</h3>
 
@@ -98,11 +103,15 @@ auth.onAuthStateChanged(user => {
             Status: ${o.status.toUpperCase()}
           </p>
 
-          <p style="color:#aaa;font-size:0.9rem;">
+          <ul style="color:#ccc;font-size:0.9rem;margin:0.6rem 0 0.8rem;">
+            ${itemsHtml || "<li>No items</li>"}
+          </ul>
+
+          <p style="color:#888;font-size:0.85rem;">
             ${time}
           </p>
         </div>
-      `;
+      `);
     });
   });
 </script>

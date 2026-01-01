@@ -468,6 +468,7 @@
     // ⏱ TIME
     createdAt: firebase.firestore.FieldValue.serverTimestamp()
   };
+console.log("ORDER SENT TO FIRESTORE:", cart);
 
   db.collection("orders")
     .add(orderData)

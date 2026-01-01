@@ -1,9 +1,4 @@
-/* =============================
-   SAFE BOOT
-============================= */
-console.log("script.js loaded");
 
-const hasFirebase = typeof firebase !== "undefined";
 
 /* =============================
    GLOBAL STATE
@@ -20,7 +15,7 @@ function addToCart(name, price) {
 
   if (item) {
     if (item.qty >= MAX_QTY_PER_ITEM) {
-      document.getElementById("limit-modal")?.classList.add("show");
+      document.getElementById("limit-modal").classList.add("show");
       return;
     }
     item.qty++;
@@ -58,42 +53,41 @@ function updateCartBar() {
 }
 
 function closeLimitModal() {
-  document.getElementById("limit-modal")?.classList.remove("show");
+  document.getElementById("limit-modal").classList.remove("show");
 }
 
 /* =============================
-   CHECKOUT
+   CHECKOUT MODALS
 ============================= */
 function checkout() {
   if (!cart.length) {
-    document.getElementById("empty-cart-modal")?.classList.add("show");
+    document.getElementById("empty-cart-modal").classList.add("show");
     return;
   }
 
-  const user = hasFirebase ? firebase.auth().currentUser : null;
+  const user = firebase.auth().currentUser;
 
   if (!user) {
-    localStorage.setItem("afterLogin", "/index.html?checkout=true");
-    window.location.href = "/login.html";
-    return;
-  }
-
-  document.getElementById("order-modal")?.classList.add("show");
+  localStorage.setItem("afterLogin", "/index.html?checkout=true");
+  window.location.href = "/login.html";
+  return;
 }
 
+  document.getElementById("order-modal").classList.add("show");
+}
 function closeModal() {
-  document.getElementById("order-modal")?.classList.remove("show");
+  document.getElementById("order-modal").classList.remove("show");
 }
 
 function closeEmptyCart() {
-  document.getElementById("empty-cart-modal")?.classList.remove("show");
+  document.getElementById("empty-cart-modal").classList.remove("show");
 }
 
 /* =============================
-   CONFIRM ORDER
+   CONFIRM ORDER (SAFE)
 ============================= */
 function confirmOrder() {
-console.log("CART BEFORE ORDER:", cart);
+  console.log("CART BEFORE ORDER:", cart);
   if (orderSubmitting) return;
   orderSubmitting = true;
 
@@ -103,8 +97,8 @@ console.log("CART BEFORE ORDER:", cart);
     btn.innerText = "Placing order...";
   }
 
-  const name = document.getElementById("cust-name")?.value.trim();
-  const phone = document.getElementById("cust-phone")?.value.trim();
+  const name = document.getElementById("cust-name").value.trim();
+  const phone = document.getElementById("cust-phone").value.trim();
 
   if (!/^\d{10}$/.test(phone)) {
     alert("Enter valid phone number");
@@ -138,8 +132,6 @@ function openCartModal() {
   const itemsBox = document.getElementById("cart-items");
   const totalBox = document.getElementById("cart-total");
 
-  if (!modal || !itemsBox || !totalBox) return;
-
   itemsBox.innerHTML = "";
   let total = 0;
 
@@ -166,7 +158,7 @@ function openCartModal() {
 }
 
 function closeCartModal() {
-  document.getElementById("cart-modal")?.classList.remove("show");
+  document.getElementById("cart-modal").classList.remove("show");
 }
 
 function proceedToDetails() {
@@ -179,7 +171,9 @@ function proceedToDetails() {
 ============================= */
 function changeQty(index, delta) {
   cart[index].qty += delta;
-  if (cart[index].qty <= 0) cart.splice(index, 1);
+  if (cart[index].qty <= 0) {
+    cart.splice(index, 1);
+  }
   updateCartBar();
   openCartModal();
 }
@@ -200,7 +194,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 /* =============================
-   HEADER + HAMBURGER (BULLETPROOF)
+   HEADER + HAMBURGER
 ============================= */
 let lastScrollY = window.scrollY;
 const header = document.querySelector("header");

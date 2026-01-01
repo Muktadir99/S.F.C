@@ -93,6 +93,7 @@ function closeEmptyCart() {
    CONFIRM ORDER
 ============================= */
 function confirmOrder() {
+console.log("CART BEFORE ORDER:", cart);
   if (orderSubmitting) return;
   orderSubmitting = true;
 

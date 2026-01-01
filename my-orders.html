@@ -71,7 +71,7 @@ auth.onAuthStateChanged(user => {
   }
 
   db.collection("orders")
-  .where("userId", "==", user.uid)
+  .where("userEmail", "==", user.email)
   .onSnapshot(snapshot => {
     ordersBox.innerHTML = "";
 

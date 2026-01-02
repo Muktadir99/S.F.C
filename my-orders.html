@@ -71,53 +71,31 @@ auth.onAuthStateChanged(user => {
   }
 
   db.collection("orders")
-    .where("userEmail", "==", user.email)
-    .orderBy("createdAt", "desc")
-    .onSnapshot(snapshot => {
+.where("userId", "==", user.uid)
+.orderBy("createdAt", "desc")
+  .onSnapshot(snapshot => {
 
-      ordersBox.innerHTML = "";
+    ordersBox.innerHTML = "";
 
-      if (snapshot.empty) {
-        ordersBox.innerHTML = `
-          <p style="text-align:center;color:#aaa;">
-            No orders yet.
-          </p>`;
-        return;
-      }
+    if (snapshot.empty) {
+      ordersBox.innerHTML = "<p>No orders yet</p>";
+      return;
+    }
 
-      snapshot.forEach(doc => {
-        const o = doc.data();
+    snapshot.forEach(doc => {
+      const o = doc.data();
 
-        let itemsHtml = "";
-        if (Array.isArray(o.items)) {
-          o.items.forEach(i => {
-            itemsHtml += `<div>${i.name} × ${i.qty}</div>`;
-          });
-        }
+      const time = o.createdAt?.seconds
+        ? new Date(o.createdAt.seconds * 1000).toLocaleString()
+        : "Just now";
 
-        const time = o.createdAt && o.createdAt.seconds
-          ? new Date(o.createdAt.seconds * 1000).toLocaleString()
-          : "Just now";
-
-        ordersBox.innerHTML += `
-          <div class="menu-card" style="margin-bottom:1.2rem;">
-            <h3>₹${o.total}</h3>
-
-            <div style="margin:0.6rem 0;color:#ccc;">
-              ${itemsHtml}
-            </div>
-
-            <p class="status ${o.status}">
-              Status: ${o.status.toUpperCase()}
-            </p>
-
-            <p style="color:#aaa;font-size:0.9rem;">
-              ${time}
-            </p>
-          </div>
-        `;
-      });
-
+      ordersBox.innerHTML += `
+        <div class="menu-card">
+          <h3>₹${o.total}</h3>
+          <p>Status: ${o.status}</p>
+          <p>${time}</p>
+        </div>
+      `;
     });
 });
 </script>

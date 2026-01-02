@@ -415,94 +415,111 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
 <script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyCcGt23_4BokfQUrScFs88KMqn-sphaXbA",
-    authDomain: "sfc-uluberia.firebaseapp.com",
-    projectId: "sfc-uluberia",
-    storageBucket: "sfc-uluberia.appspot.com",
-    messagingSenderId: "286996634308",
-    appId: "1:286996634308:web:6ec52f89dde053bd830791"
-  };
+/* =============================
+   FIREBASE INIT (SINGLE SOURCE)
+============================= */
+const firebaseConfig = {
+  apiKey: "AIzaSyCcGt23_4BokfQUrScFs88KMqn-sphaXbA",
+  authDomain: "sfc-uluberia.firebaseapp.com",
+  projectId: "sfc-uluberia",
+  storageBucket: "sfc-uluberia.appspot.com",
+  messagingSenderId: "286996634308",
+  appId: "1:286996634308:web:6ec52f89dde053bd830791"
+};
 
-  if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-  }
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
 
-  const auth = firebase.auth();
-  const db = firebase.firestore();
+/* expose globally */
+window.auth = firebase.auth();
+window.db = firebase.firestore();
 
+console.log("Firebase initialized");
 </script>
-<script>
-  function placeOrderToFirebase({ name, phone, cart }) {
-  const user = firebase.auth().currentUser;
 
-  // 🔒 HARD AUTH LOCK
+<script>
+/* =============================
+   PLACE ORDER (SAFE)
+============================= */
+window.placeOrderToFirebase = function ({ name, phone, cart }) {
+
+  const user = auth.currentUser;
+
   if (!user) {
-    alert("Please login again");
-    resetConfirmBtn();
+    alert("Session expired. Please login again.");
+    if (typeof resetConfirmBtn === "function") resetConfirmBtn();
     return;
   }
 
-  const orderData = {
-    // 👤 CUSTOMER INFO
+  if (!Array.isArray(cart) || cart.length === 0) {
+    alert("Cart empty");
+    return;
+  }
+
+  const orderPayload = {
     name: name || user.displayName || "Customer",
     phone: phone,
-
-    // 🧺 ITEMS ARRAY (MUST)
     items: cart.map(i => ({
       name: i.name,
       price: i.price,
       qty: i.qty
     })),
-
-    // 💰 TOTAL
-    total: cart.reduce((sum, i) => sum + i.qty * i.price, 0),
-
-    // 📦 STATUS
-    status: "pending",
-
-    // 🔑 USER LINK (THIS IS THE KEY)
-    userId: user.uid,
     userEmail: user.email,
-
-    // ⏱ TIME
-    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    userId: user.uid
   };
-console.log("ORDER SENT TO FIRESTORE:", cart);
 
-  db.collection("orders")
-    .add(orderData)
-    .then(() => {
-      const btn = document.getElementById("confirmBtn");
-      if (btn) btn.innerText = "Order Placed ✔️";
+  console.log("ORDER SENT TO BACKEND:", orderPayload);
 
-      setTimeout(() => {
-        closeModal();
-        cart = [];
-        updateCartBar();
-        orderSubmitting = false;
+  fetch("http://127.0.0.1:5000/order", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(orderPayload)
+  })
+  .then(res => {
+    if (!res.ok) throw new Error("Backend error");
+    return res.json();
+  })
+  .then(data => {
+    console.log("BACKEND RESPONSE:", data);
 
-        // 👉 SEND USER TO MY ORDERS
-        window.location.href = "/my-orders.html";
-      }, 800);
-    })
-    .catch(err => {
-      console.error(err);
-      alert("Order failed. Try again.");
-      resetConfirmBtn();
-    });
-}
-</script>
-<script>
-  auth.onAuthStateChanged(user => {
-    if (user && location.search.includes("checkout")) {
-      const modal = document.getElementById("order-modal");
-      if (modal) modal.classList.add("show");
-    }
+    const btn = document.getElementById("confirmBtn");
+    if (btn) btn.innerText = "Order Placed ✔️";
+
+    setTimeout(() => {
+      if (typeof closeModal === "function") closeModal();
+      if (typeof updateCartBar === "function") updateCartBar();
+
+      cart.length = 0;
+      window.orderSubmitting = false;
+
+      window.location.href = "/my-orders.html";
+    }, 600);
+  })
+  .catch(err => {
+    console.error("ORDER ERROR:", err);
+    alert("Order failed. Try again.");
+    if (typeof resetConfirmBtn === "function") resetConfirmBtn();
   });
+};
 </script>
-<script src="https://cdn.jsdelivr.net/npm/eruda"></script>
-<script>eruda.init();</script>
+
+<script>
+/* =============================
+   CHECKOUT AUTO OPEN AFTER LOGIN
+============================= */
+auth.onAuthStateChanged(user => {
+  if (!user) return;
+
+  if (location.search.includes("checkout")) {
+    const modal = document.getElementById("order-modal");
+    if (modal) modal.classList.add("show");
+  }
+});
+</script>
+
 <script src="script.js"></script>
 </body>
 </html>
